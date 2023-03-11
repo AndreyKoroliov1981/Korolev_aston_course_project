@@ -8,6 +8,7 @@ import retrofit2.http.Query
 interface CharactersRetrofitService {
  @GET("character")
  fun getAllCharacters(
- //@Query("pages") page: Int
+ @Query("page") page: Int
  ): Call<CharactersResponse>
+
 }

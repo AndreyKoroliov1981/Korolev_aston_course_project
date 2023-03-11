@@ -8,16 +8,17 @@ import com.example.domain.characters.model.Response
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-
 class CharactersRepositoryImpl(
     private val charactersMapper: CharactersMapper,
     private var charactersRetrofitService: CharactersRetrofitService,
     //private var historyRepository: HistoryRepository
 ) : CharactersRepository {
-    override suspend fun getAllCharacters(page: Int): Response<List<Characters>> =
+    override suspend fun getCharacters(): Response<List<Characters>> =
         withContext(Dispatchers.IO) {
+            currentPage++
+            Log.d("my_tag", "getCharacters page = $currentPage")
             try {
-                val response = charactersRetrofitService.getAllCharacters().execute()
+                val response = charactersRetrofitService.getAllCharacters(currentPage).execute()
                 if (response.isSuccessful) {
                     Log.d("my_tag", "response successful")
                 } else {
@@ -28,10 +29,16 @@ class CharactersRepositoryImpl(
                     data = charactersMapper.mapCharactersFromNetwork(responseBody!!),
                     errorText = null)
             } catch (e: java.lang.Exception) {
+                currentPage--
                 return@withContext Response(
                     data = null,
                     errorText = e.toString())
             }
         }
+
+    companion object {
+        var currentPage = 0
+    }
+
 }
 

@@ -61,7 +61,7 @@ class CharactersAdapter(private val onItemCLick: RVOnClickCharactersListeners) :
             binding.apply {
                 Glide.with(binding.root.context)
                     .load(characters.image)
-                    //.error(R.drawable.imagenotfound)
+                    .centerCrop()
                     .into(ivImage)
                 tvName.text = characters.name
                 tvSpecies.text = characters.species

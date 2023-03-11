@@ -4,5 +4,5 @@ import com.example.domain.characters.model.Characters
 import com.example.domain.characters.model.Response
 
 interface CharactersInteractor {
-    suspend fun getAllCharacters() : Response<List<Characters>>
+    suspend fun getCharacters() : Response<List<Characters>>
 }

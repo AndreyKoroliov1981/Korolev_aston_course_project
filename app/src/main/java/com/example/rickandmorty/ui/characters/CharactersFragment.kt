@@ -11,7 +11,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.domain.characters.model.Characters
 import com.example.rickandmorty.app.App
 import com.example.rickandmorty.databinding.FragmentCharactersBinding
@@ -49,6 +50,18 @@ class CharactersFragment: Fragment() {
         (activity?.applicationContext as App).appComponent.injectCharactersFragment(this)
         viewModel = ViewModelProvider(this, vmFactory).get(CharactersViewModel::class.java)
         binding.rvCharacters.adapter = charactersRVAdapter
+        val layoutManager = binding.rvCharacters.layoutManager as StaggeredGridLayoutManager
+        binding.rvCharacters.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val totalItemCount = layoutManager.itemCount
+                val lastVisibleItemArray = layoutManager.findLastVisibleItemPositions(null)
+                val lastVisibleItem = getLastVisibleItem(lastVisibleItemArray)
+                if (lastVisibleItem > totalItemCount - 10)  {
+                    viewModel.getCharacters()
+                }
+            }
+        })
         binding.apply {
             lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -81,5 +94,17 @@ class CharactersFragment: Fragment() {
             }
         }
 
+    }
+
+    fun getLastVisibleItem(lastVisibleItemPositions: IntArray): Int {
+        var maxSize = 0
+        for (i in lastVisibleItemPositions.indices) {
+            if (i == 0) {
+                maxSize = lastVisibleItemPositions[i]
+            } else if (lastVisibleItemPositions[i] > maxSize) {
+                maxSize = lastVisibleItemPositions[i]
+            }
+        }
+        return maxSize
     }
 }
