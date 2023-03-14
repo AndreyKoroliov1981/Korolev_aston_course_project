@@ -5,6 +5,48 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/svCharacters"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/cgFilter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/svCharacters"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="4dp"
+        app:chipSpacing="25dp"
+        app:singleLine="true"
+        >
+        <com.google.android.material.chip.Chip
+            android:id="@+id/cAlive"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_alive"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+        />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/cDead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_dead"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            />
+        <com.google.android.material.chip.Chip
+            android:id="@+id/cUnknown"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_unknown"
+            style="@style/Widget.MaterialComponents.Chip.Filter"
+            />
+    </com.google.android.material.chip.ChipGroup>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvCharacters"
         android:layout_width="match_parent"
@@ -16,7 +58,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cgFilter"
         app:layout_constraintVertical_bias="0.0"
         app:spanCount="2"
         tools:listitem="@layout/item_characters" />

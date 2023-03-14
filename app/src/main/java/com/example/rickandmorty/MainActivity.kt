@@ -3,6 +3,8 @@ package com.example.rickandmorty
 import android.os.Bundle
 import android.os.Looper
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import com.example.rickandmorty.databinding.ActivityMainBinding
 import com.example.rickandmorty.ui.characters.CharactersFragment
@@ -17,6 +19,12 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setBottomOnItemSelectedListener()
+
+        window.decorView.setOnApplyWindowInsetsListener { view, insets ->
+            val insetsCompat = WindowInsetsCompat.toWindowInsetsCompat(insets, view)
+            binding.bottomNavBar.isGone = insetsCompat.isVisible(WindowInsetsCompat.Type.ime())
+            view.onApplyWindowInsets(insets)
+        }
     }
 
     private fun setBottomOnItemSelectedListener() {

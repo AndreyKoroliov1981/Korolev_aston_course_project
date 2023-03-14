@@ -5,4 +5,6 @@ import com.example.domain.characters.model.Response
 
 interface CharactersRepository {
     suspend fun getCharacters() : Response<List<Characters>>
+
+    fun setPageOnStart()
 }

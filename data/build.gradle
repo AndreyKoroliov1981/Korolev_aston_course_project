@@ -46,6 +46,4 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
     implementation "com.squareup.retrofit2:retrofit:$retrofitVersion"
     implementation "com.squareup.retrofit2:converter-gson:$retrofitVersion"
-
-    implementation "androidx.paging:paging-runtime-ktx:$pagingVersion"
 }

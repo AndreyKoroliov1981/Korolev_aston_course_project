@@ -1,10 +1,15 @@
 package com.example.rickandmorty.ui.characters
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
@@ -14,19 +19,27 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.domain.characters.model.Characters
+import com.example.rickandmorty.R
 import com.example.rickandmorty.app.App
+import com.example.rickandmorty.app.App.Companion.appComponent
+import com.example.rickandmorty.common.IsEmptyFilter
+import com.example.rickandmorty.common.IsErrorData
 import com.example.rickandmorty.databinding.FragmentCharactersBinding
 import com.example.rickandmorty.ui.characters.recycler.CharactersAdapter
 import com.example.rickandmorty.ui.characters.recycler.RVOnClickCharactersListeners
+import com.google.android.material.chip.Chip
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class CharactersFragment: Fragment() {
+class CharactersFragment : Fragment() {
     private lateinit var binding: FragmentCharactersBinding
 
     @javax.inject.Inject
     lateinit var vmFactory: CharactersViewModelFactory
     private lateinit var viewModel: CharactersViewModel
+
 
     private var charactersRVAdapter = CharactersAdapter(
         object : RVOnClickCharactersListeners {
@@ -47,21 +60,13 @@ class CharactersFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity?.applicationContext as App).appComponent.injectCharactersFragment(this)
+        appComponent.injectCharactersFragment(this)
         viewModel = ViewModelProvider(this, vmFactory).get(CharactersViewModel::class.java)
         binding.rvCharacters.adapter = charactersRVAdapter
-        val layoutManager = binding.rvCharacters.layoutManager as StaggeredGridLayoutManager
-        binding.rvCharacters.addOnScrollListener(object: RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val totalItemCount = layoutManager.itemCount
-                val lastVisibleItemArray = layoutManager.findLastVisibleItemPositions(null)
-                val lastVisibleItem = getLastVisibleItem(lastVisibleItemArray)
-                if (lastVisibleItem > totalItemCount - 10)  {
-                    viewModel.getCharacters()
-                }
-            }
-        })
+        setRVScrollListeners()
+        setChipFiltersListeners()
+        setSearchViewQueryTextListeners()
+
         binding.apply {
             lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -75,14 +80,32 @@ class CharactersFragment: Fragment() {
                                 rvCharacters.isVisible = true
                                 //tvNoDataInDB.isVisible = false
                             }
+
+                            setStateChipFilter(
+                                binding.cAlive,
+                                it.chipFilterAliveInstalled
+                            )
+                            setStateChipFilter(
+                                binding.cDead,
+                                it.chipFilterDeadInstalled
+                            )
+                            setStateChipFilter(
+                                binding.cUnknown,
+                                it.chipFilterUnknownInstalled
+                            )
+
                         }
                     }
 
                     launch {
                         viewModel.sideEffect.collectLatest {
-//                            if (it is IsNotHomeDataNetwork) {
-//                                writeError(view, it.errorMessage)
-//                            }
+                            if (it is IsErrorData) {
+                                writeError(view, it.errorMessage)
+                            }
+
+                            if (it is IsEmptyFilter) {
+                                writeError(view, resources.getString(R.string.text_error_empty_filter))
+                            }
 //                            if (it is IsHomeDataNetwork) {
 //                                val action =
 //                                    HomeFragmentDirections.actionFragmentHomeToFragmentDetail(it.data)
@@ -93,7 +116,51 @@ class CharactersFragment: Fragment() {
                 }
             }
         }
+    }
 
+    private fun setSearchViewQueryTextListeners() {
+        binding.svCharacters.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null) viewModel.clickSearchViewQuery(query)
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (newText != null) viewModel.changeSearchViewQuery(newText)
+                return false
+            }
+        })
+    }
+
+    private fun setRVScrollListeners() {
+        val layoutManager = binding.rvCharacters.layoutManager as StaggeredGridLayoutManager
+        binding.rvCharacters.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val totalItemCount = layoutManager.itemCount
+                val lastVisibleItemArray = layoutManager.findLastVisibleItemPositions(null)
+                val lastVisibleItem = getLastVisibleItem(lastVisibleItemArray)
+                if (lastVisibleItem > totalItemCount - 10) {
+                    viewModel.getCharacters()
+                }
+            }
+        })
+    }
+
+    private fun setStateChipFilter(view: Chip, flag: Boolean) {
+        view.isChecked = flag
+    }
+
+    private fun setChipFiltersListeners() {
+        binding.cAlive.setOnClickListener {
+            viewModel.clickChipFilterAlive()
+        }
+        binding.cDead.setOnClickListener {
+            viewModel.clickChipFilterDead()
+        }
+        binding.cUnknown.setOnClickListener {
+            viewModel.clickChipFilterUnknown()
+        }
     }
 
     fun getLastVisibleItem(lastVisibleItemPositions: IntArray): Int {
@@ -106,5 +173,20 @@ class CharactersFragment: Fragment() {
             }
         }
         return maxSize
+    }
+
+    private fun writeError(view: View, error: String) {
+        val snackBarView =
+            Snackbar.make(view, error, Snackbar.LENGTH_LONG)
+                .setTextColor(ContextCompat.getColor(requireContext(), R.color.error_text))
+                .setAction("Retry") {
+                    viewModel.onClickSendRequest()
+                }
+        val sbView = snackBarView.view
+        val params = sbView.layoutParams as FrameLayout.LayoutParams
+        params.gravity = Gravity.TOP
+        sbView.layoutParams = params
+        snackBarView.animationMode = BaseTransientBottomBar.ANIMATION_MODE_FADE
+        snackBarView.show()
     }
 }
