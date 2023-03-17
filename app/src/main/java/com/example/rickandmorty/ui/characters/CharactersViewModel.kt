@@ -1,6 +1,5 @@
 package com.example.rickandmorty.ui.characters
 
-import android.util.Log
 import com.example.domain.characters.CharactersInteractor
 import com.example.domain.characters.model.Characters
 import com.example.rickandmorty.common.BaseViewModel
@@ -14,14 +13,11 @@ import kotlinx.coroutines.delay
 class CharactersViewModel(
     private val charactersInteractor: CharactersInteractor,
     private val charactersUIMapper: CharactersUIMapper,
-) :
-    BaseViewModel<CharactersState>(CharactersState()) {
+) : BaseViewModel<CharactersState>(CharactersState()) {
 
     private var job: Job? = null
-    private var isLoad = false
 
     init {
-        Log.d("my_tag","start init")
         charactersInteractor.setStartPage()
         getCharacters()
     }
@@ -31,7 +27,6 @@ class CharactersViewModel(
     }
 
     fun getCharacters() {
-        Log.d("my_tag","getCharacters")
         job?.cancel()
         job = launch {
             delay(300)

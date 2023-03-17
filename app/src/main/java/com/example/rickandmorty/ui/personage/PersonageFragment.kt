@@ -1,18 +1,41 @@
 package com.example.rickandmorty.ui.personage
 
 import android.os.Bundle
+import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
+import com.example.domain.episodes.model.Episode
 import com.example.rickandmorty.MainActivity
+import com.example.rickandmorty.R
+import com.example.rickandmorty.app.App.Companion.appComponent
+import com.example.rickandmorty.common.IsErrorData
 import com.example.rickandmorty.databinding.FragmentPersonageBinding
 import com.example.rickandmorty.ui.personage.model.CharactersUI
+import com.example.rickandmorty.ui.personage.recycler.PersonageAdapter
+import com.example.rickandmorty.ui.personage.recycler.RVOnClickEpisodeListener
+import com.google.android.material.snackbar.BaseTransientBottomBar
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class PersonageFragment : Fragment() {
     private lateinit var binding: FragmentPersonageBinding
     private var personage: CharactersUI? = null
+
+    @javax.inject.Inject
+    lateinit var vmFactory: PersonageViewModelFactory
+    private lateinit var viewModel: PersonageViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +54,50 @@ class PersonageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        appComponent.injectPersonageFragment(this)
+        viewModel = ViewModelProvider(this, vmFactory).get(PersonageViewModel::class.java)
         (activity as? MainActivity)?.showBottomNavBar(false)
+
+        setBackArrowNavigationListener()
+        setFields()
+
+        binding.apply {
+            lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    launch {
+                        viewModel.stateFlow.collect {
+                            if (it.episodes == emptyList<Episode>()) {
+                                rvEpisodes.isVisible = false
+                            } else {
+                                Log.d("my_tag","it.episodes = ${it.episodes}")
+                                val episodesRVAdapter = PersonageAdapter(
+                                    object : RVOnClickEpisodeListener {
+                                        override fun onClicked(item: Episode) {
+                                            viewModel.onClickEpisode(item)
+                                        }
+                                    }, it.episodes
+                                )
+                                rvEpisodes.adapter = episodesRVAdapter
+                                rvEpisodes.isVisible = true
+                            }
+                            binding.pbLoadData.isVisible = it.dataLoading
+                        }
+                    }
+
+                    launch {
+                        viewModel.sideEffect.collectLatest {
+                            if (it is IsErrorData) {
+                                writeError(view, it.errorMessage)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    private fun setFields() {
         with(binding) {
             if (personage != null) {
                 Glide.with(requireContext())
@@ -45,9 +111,30 @@ class PersonageFragment : Fragment() {
                 tvGender.text = personage!!.gender
                 tvLocation.text = personage!!.location.name
                 tvOrigin.text = personage!!.origin.name
+                viewModel.getEpisodes(personage!!.episode)
             }
         }
+    }
 
+    private fun setBackArrowNavigationListener() {
+        binding.toolbar.setNavigationOnClickListener {
+            parentFragmentManager.popBackStack()
+        }
+    }
+
+    private fun writeError(view: View, error: String) {
+        val snackBarView =
+            Snackbar.make(view, error, Snackbar.LENGTH_LONG)
+                .setTextColor(ContextCompat.getColor(requireContext(), R.color.error_text))
+                .setAction("Retry") {
+                    viewModel.onClickSendRequest()
+                }
+        val sbView = snackBarView.view
+        val params = sbView.layoutParams as FrameLayout.LayoutParams
+        params.gravity = Gravity.TOP
+        sbView.layoutParams = params
+        snackBarView.animationMode = BaseTransientBottomBar.ANIMATION_MODE_FADE
+        snackBarView.show()
     }
 
     companion object {
@@ -64,29 +151,3 @@ class PersonageFragment : Fragment() {
     }
 
 }
-
-
-//class DemoFragment : Fragment() {
-//    private var param1: Int? = null
-//    private var param2: String? = null
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        arguments?.let { args ->
-//            param1 = args.getInt(Args.PARAM1)
-//            param2 = args.getString(Args.PARAM2)
-//        }
-//    }
-//    companion object {
-//        private object Args {
-//            const val PARAM1 = "param1"
-//            const val PARAM2 = "param2"
-//        }
-//        fun newInstance(param1: Int, param2: String): DemoFragment =
-//            DemoFragment().apply {
-//                arguments = Bundle().apply {
-//                    putInt(Args.PARAM1, param1)
-//                    putString(Args.PARAM2, param2)
-//                }
-//            }
-//    }
-//}
