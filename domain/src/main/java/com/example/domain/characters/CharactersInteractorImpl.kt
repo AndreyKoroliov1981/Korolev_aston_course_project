@@ -35,4 +35,8 @@ class CharactersInteractorImpl(private val charactersRepository: CharactersRepos
             }
         return Response(filterAnswer, answer.errorText)
     }
+
+    override fun setStartPage() {
+        charactersRepository.setPageOnStart()
+    }
 }

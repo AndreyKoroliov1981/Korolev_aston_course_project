@@ -8,4 +8,5 @@
     <string name="text_unknown">Unknown</string>
 
     <string name="text_error_empty_filter">Необходимо установить минимум одно значение в фильтре </string>
+    <string name="text_personage">Персонаж</string>
 </resources>

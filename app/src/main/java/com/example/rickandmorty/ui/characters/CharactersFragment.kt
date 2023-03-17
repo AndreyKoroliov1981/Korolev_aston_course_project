@@ -1,12 +1,8 @@
 package com.example.rickandmorty.ui.characters
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.FrameLayout
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
@@ -19,14 +15,17 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.domain.characters.model.Characters
+import com.example.rickandmorty.FragmentsTags
+import com.example.rickandmorty.MainActivity
 import com.example.rickandmorty.R
-import com.example.rickandmorty.app.App
 import com.example.rickandmorty.app.App.Companion.appComponent
 import com.example.rickandmorty.common.IsEmptyFilter
 import com.example.rickandmorty.common.IsErrorData
 import com.example.rickandmorty.databinding.FragmentCharactersBinding
 import com.example.rickandmorty.ui.characters.recycler.CharactersAdapter
 import com.example.rickandmorty.ui.characters.recycler.RVOnClickCharactersListeners
+import com.example.rickandmorty.ui.personage.PersonageFragment
+import com.example.rickandmorty.ui.personage.model.CharactersUIMapper
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -40,12 +39,14 @@ class CharactersFragment : Fragment() {
     lateinit var vmFactory: CharactersViewModelFactory
     private lateinit var viewModel: CharactersViewModel
 
-
     private var charactersRVAdapter = CharactersAdapter(
         object : RVOnClickCharactersListeners {
             override fun onClicked(item: Characters) {
-                //viewModel.onClickDeleteRequest(item)
-                Log.d("my_tag", "clicked characters = ${item.name}")
+                val itemUI = viewModel.mapCharactersToCharactersUI(item)
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container_view, PersonageFragment.newInstance(itemUI), FragmentsTags.Personage.tag)
+                    .addToBackStack(null)
+                    .commit()
             }
         }
     )
@@ -58,10 +59,16 @@ class CharactersFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         appComponent.injectCharactersFragment(this)
         viewModel = ViewModelProvider(this, vmFactory).get(CharactersViewModel::class.java)
+        (activity as? MainActivity)?.showBottomNavBar(true)
         binding.rvCharacters.adapter = charactersRVAdapter
         setRVScrollListeners()
         setChipFiltersListeners()
@@ -106,11 +113,6 @@ class CharactersFragment : Fragment() {
                             if (it is IsEmptyFilter) {
                                 writeError(view, resources.getString(R.string.text_error_empty_filter))
                             }
-//                            if (it is IsHomeDataNetwork) {
-//                                val action =
-//                                    HomeFragmentDirections.actionFragmentHomeToFragmentDetail(it.data)
-//                                Navigation.findNavController(viewBinding.root).navigate(action)
-//                            }
                         }
                     }
                 }
@@ -121,11 +123,13 @@ class CharactersFragment : Fragment() {
     private fun setSearchViewQueryTextListeners() {
         binding.svCharacters.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                if (query != null) viewModel.clickSearchViewQuery(query)
+                Log.d("my_tag","start onQueryTextSubmit")
+                if (query != null) viewModel.changeSearchViewQuery(query)
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+                Log.d("my_tag","start onQueryTextChange")
                 if (newText != null) viewModel.changeSearchViewQuery(newText)
                 return false
             }

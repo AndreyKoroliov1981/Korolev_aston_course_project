@@ -1,10 +1,14 @@
 package com.example.rickandmorty
 
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Looper
+import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.example.rickandmorty.databinding.ActivityMainBinding
 import com.example.rickandmorty.ui.characters.CharactersFragment
@@ -19,12 +23,6 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setBottomOnItemSelectedListener()
-
-        window.decorView.setOnApplyWindowInsetsListener { view, insets ->
-            val insetsCompat = WindowInsetsCompat.toWindowInsetsCompat(insets, view)
-            binding.bottomNavBar.isGone = insetsCompat.isVisible(WindowInsetsCompat.Type.ime())
-            view.onApplyWindowInsets(insets)
-        }
     }
 
     private fun setBottomOnItemSelectedListener() {
@@ -42,6 +40,10 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
+    }
+
+    fun showBottomNavBar(show: Boolean) {
+        binding.bottomNavBar.isVisible = show
     }
 
     private fun replaceFragment(fragment: Fragment, tag: String) {
