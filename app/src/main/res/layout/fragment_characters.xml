@@ -5,9 +5,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ProgressBar
+        android:id="@+id/pbLoad"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminateBehavior="cycle"
+        android:indeterminateOnly="true"
+        style="@android:style/Widget.Holo.ProgressBar.Horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
     <androidx.appcompat.widget.SearchView
         android:id="@+id/svCharacters"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pbLoad"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_margin="4dp"
         android:layout_width="match_parent"

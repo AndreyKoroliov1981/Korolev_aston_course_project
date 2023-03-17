@@ -81,11 +81,13 @@ class CharactersFragment : Fragment() {
                         viewModel.stateFlow.collect {
                             if (it.characters == emptyList<Characters>()) {
                                 rvCharacters.isVisible = false
-                                //tvNoDataInDB.isVisible = true
                             } else {
                                 charactersRVAdapter.updateList(it.characters)
                                 rvCharacters.isVisible = true
-                                //tvNoDataInDB.isVisible = false
+                            }
+
+                            if (it.dataLoading) binding.pbLoad.visibility = View.VISIBLE else {
+                                binding.pbLoad.visibility = View.INVISIBLE
                             }
 
                             setStateChipFilter(

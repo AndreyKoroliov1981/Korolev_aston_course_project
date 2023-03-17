@@ -7,5 +7,6 @@ data class CharactersState(
     val chipFilterAliveInstalled: Boolean = true,
     val chipFilterDeadInstalled: Boolean = true,
     val chipFilterUnknownInstalled: Boolean = true,
-    val searchName: String = ""
+    val searchName: String = "",
+    val dataLoading: Boolean = false
 )

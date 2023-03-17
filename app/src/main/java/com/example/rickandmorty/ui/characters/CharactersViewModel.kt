@@ -40,7 +40,7 @@ class CharactersViewModel(
             if (state.chipFilterDeadInstalled) newFilters.add("Dead")
             if (state.chipFilterUnknownInstalled) newFilters.add("unknown")
             if (newFilters.isNotEmpty()) {
-                    isLoad = true
+                updateState { copy(dataLoading = true) }
                     var isCheckedEndLoadFromApi = true
                     while (isCheckedEndLoadFromApi) {
                         val responseListCharacters =
@@ -58,7 +58,7 @@ class CharactersViewModel(
                             sideEffectSharedFlow.emit(IsErrorData(responseListCharacters.errorText!!))
                         }
                     }
-                    isLoad = false
+                updateState { copy(dataLoading = false) }
             } else {
                 sideEffectSharedFlow.emit(IsEmptyFilter())
             }
