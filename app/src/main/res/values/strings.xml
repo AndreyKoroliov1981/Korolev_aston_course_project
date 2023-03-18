@@ -3,4 +3,10 @@
     <string name="textCharacters">Персонажи</string>
     <string name="textLocation">Локации</string>
     <string name="textEpisodes">Эпизоды</string>
+    <string name="text_alive">Alive</string>
+    <string name="text_dead">Dead</string>
+    <string name="text_unknown">Unknown</string>
+
+    <string name="text_error_empty_filter">Необходимо установить минимум одно значение в фильтре </string>
+    <string name="text_personage">Персонаж</string>
 </resources>

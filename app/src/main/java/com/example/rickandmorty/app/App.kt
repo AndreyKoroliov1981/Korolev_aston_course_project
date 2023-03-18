@@ -6,13 +6,16 @@ import com.example.rickandmorty.di.AppModule
 import com.example.rickandmorty.di.DaggerAppComponent
 
 class App : Application() {
-    lateinit var appComponent: AppComponent
+    //lateinit var appComponent: AppComponent
 
     override fun onCreate() {
         super.onCreate()
         appComponent = DaggerAppComponent
             .builder()
-            .appModule(AppModule())
             .build()
+    }
+
+    companion object {
+        lateinit var appComponent: AppComponent
     }
 }

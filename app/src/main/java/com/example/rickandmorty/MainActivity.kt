@@ -1,8 +1,14 @@
 package com.example.rickandmorty
 
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Looper
+import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isGone
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.example.rickandmorty.databinding.ActivityMainBinding
 import com.example.rickandmorty.ui.characters.CharactersFragment
@@ -34,6 +40,10 @@ class MainActivity : AppCompatActivity() {
             }
             true
         }
+    }
+
+    fun showBottomNavBar(show: Boolean) {
+        binding.bottomNavBar.isVisible = show
     }
 
     private fun replaceFragment(fragment: Fragment, tag: String) {
