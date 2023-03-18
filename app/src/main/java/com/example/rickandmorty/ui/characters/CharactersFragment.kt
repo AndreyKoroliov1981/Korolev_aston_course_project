@@ -1,7 +1,6 @@
 package com.example.rickandmorty.ui.characters
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
 import androidx.appcompat.widget.SearchView
@@ -25,7 +24,6 @@ import com.example.rickandmorty.databinding.FragmentCharactersBinding
 import com.example.rickandmorty.ui.characters.recycler.CharactersAdapter
 import com.example.rickandmorty.ui.characters.recycler.RVOnClickCharactersListeners
 import com.example.rickandmorty.ui.personage.PersonageFragment
-import com.example.rickandmorty.ui.personage.model.CharactersUIMapper
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -43,8 +41,13 @@ class CharactersFragment : Fragment() {
         object : RVOnClickCharactersListeners {
             override fun onClicked(item: Characters) {
                 val itemUI = viewModel.mapCharactersToCharactersUI(item)
+
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container_view, PersonageFragment.newInstance(itemUI), FragmentsTags.Personage.tag)
+                    .replace(
+                        R.id.fragment_container_view,
+                        PersonageFragment.newInstance(itemUI),
+                        FragmentsTags.Personage.tag
+                    )
                     .addToBackStack(null)
                     .commit()
             }
@@ -56,6 +59,7 @@ class CharactersFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentCharactersBinding.inflate(inflater, container, false)
+        appComponent.injectCharactersFragment(this)
         return binding.root
     }
 
@@ -66,7 +70,6 @@ class CharactersFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        appComponent.injectCharactersFragment(this)
         viewModel = ViewModelProvider(this, vmFactory).get(CharactersViewModel::class.java)
         (activity as? MainActivity)?.showBottomNavBar(true)
         binding.rvCharacters.adapter = charactersRVAdapter
@@ -108,12 +111,16 @@ class CharactersFragment : Fragment() {
 
                     launch {
                         viewModel.sideEffect.collectLatest {
-                            if (it is IsErrorData) {
-                                writeError(view, it.errorMessage)
-                            }
-
-                            if (it is IsEmptyFilter) {
-                                writeError(view, resources.getString(R.string.text_error_empty_filter))
+                            when (it) {
+                                is IsErrorData -> {
+                                    writeError(view, it.errorMessage)
+                                }
+                                is IsEmptyFilter -> {
+                                    writeError(
+                                        view,
+                                        resources.getString(R.string.text_error_empty_filter)
+                                    )
+                                }
                             }
                         }
                     }
@@ -125,13 +132,11 @@ class CharactersFragment : Fragment() {
     private fun setSearchViewQueryTextListeners() {
         binding.svCharacters.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                Log.d("my_tag","start onQueryTextSubmit")
                 if (query != null) viewModel.changeSearchViewQuery(query)
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                Log.d("my_tag","start onQueryTextChange")
                 if (newText != null) viewModel.changeSearchViewQuery(newText)
                 return false
             }

@@ -4,15 +4,15 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class CharactersUI(
+data class CharactersUi(
     val id: Int,
     val name: String,
     val status: String,
     val species: String,
     val type: String,
     val gender: String,
-    val origin: LocationUI,
-    val location: LocationUI,
+    val origin: LocationUi,
+    val location: LocationUi,
     val image: String,
     val episode: List<String>,
     val url: String,
@@ -20,7 +20,7 @@ data class CharactersUI(
 ):Parcelable
 
 @Parcelize
-data class LocationUI(
+data class LocationUi(
     val name: String,
     val url: String
 ):Parcelable

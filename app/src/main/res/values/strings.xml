@@ -9,4 +9,6 @@
 
     <string name="text_error_empty_filter">Необходимо установить минимум одно значение в фильтре </string>
     <string name="text_personage">Персонаж</string>
+    <string name="hint_string_episodes">string episodes, example:S01E06</string>
+    <string name="hint_name_series">name series</string>
 </resources>

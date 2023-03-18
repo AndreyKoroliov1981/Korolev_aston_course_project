@@ -1,4 +1,4 @@
-package com.example.data.network.episode.model
+package com.example.data.network.episodes.model
 
 import com.google.gson.annotations.SerializedName
 

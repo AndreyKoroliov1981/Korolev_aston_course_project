@@ -3,9 +3,9 @@ package com.example.rickandmorty.ui.personage.model
 import com.example.domain.characters.model.Characters
 import com.example.domain.characters.model.Location
 
-class CharactersUIMapper {
-    fun mapCharactersFromDomain(characters: Characters): CharactersUI {
-        return CharactersUI(
+class CharactersUiMapper {
+    fun mapCharactersFromDomain(characters: Characters): CharactersUi {
+        return CharactersUi(
             id = characters.id,
             name = characters.name,
             status = characters.status,
@@ -21,7 +21,7 @@ class CharactersUIMapper {
         )
     }
 
-    private fun mapLocationFromDomain(location: Location) = LocationUI(
+    private fun mapLocationFromDomain(location: Location) = LocationUi(
         name = location.name,
         url = location.url
     )

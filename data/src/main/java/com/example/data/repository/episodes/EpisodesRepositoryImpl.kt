@@ -1,29 +1,30 @@
-package com.example.data.repository.characters
+package com.example.data.repository.episodes
 
-import com.example.data.network.characters.CharactersRetrofitService
-import com.example.data.network.characters.model.CharactersResponse
-import com.example.domain.characters.CharactersRepository
-import com.example.domain.characters.model.Characters
+import com.example.data.network.episodes.EpisodesRetrofitService
+import com.example.data.network.episodes.model.EpisodesResponse
 import com.example.domain.characters.model.Response
+import com.example.domain.episodes.EpisodesRepository
+import com.example.domain.episodes.model.Episode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class CharactersRepositoryImpl(
-    private val charactersMapper: CharactersMapper,
-    private var charactersRetrofitService: CharactersRetrofitService,
+
+class EpisodesRepositoryImpl(
+    private val episodesMapper: EpisodesMapper,
+    private var episodesRetrofitService: EpisodesRetrofitService,
     //private var historyRepository: HistoryRepository
-) : CharactersRepository {
-    override suspend fun getCharacters(): Response<List<Characters>> =
+) : EpisodesRepository {
+    override suspend fun getEpisodes(): Response<List<Episode>> =
         withContext(Dispatchers.IO) {
             currentPage++
             try {
-                val response = charactersRetrofitService.getAllCharacters(currentPage).execute()
-                val responseBody : CharactersResponse?
+                val response = episodesRetrofitService.getAllEpisodes(currentPage).execute()
+                val responseBody : EpisodesResponse?
                 val responseError : String?
                 if (response.isSuccessful) {
                     responseBody = response.body()
                     return@withContext Response(
-                        data = charactersMapper.mapCharactersFromNetwork(responseBody!!),
+                        data = episodesMapper.mapEpisodesFromNetwork(responseBody!!),
                         errorText = null)
                 } else {
                     currentPage--

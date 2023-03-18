@@ -11,7 +11,7 @@ import com.example.rickandmorty.databinding.ItemCharactersBinding
 
 class CharactersAdapter(private val onItemCLick: RVOnClickCharactersListeners) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private val differ = AsyncListDiffer(this, VacancyDiffUtilCallback())
+    private val differ = AsyncListDiffer(this, CharactersDiffUtilCallback())
 
     fun updateList(list: List<Characters>) {
         differ.submitList(list)
@@ -38,7 +38,7 @@ class CharactersAdapter(private val onItemCLick: RVOnClickCharactersListeners) :
     }
 
 
-    class VacancyDiffUtilCallback : DiffUtil.ItemCallback<Characters>() {
+    class CharactersDiffUtilCallback : DiffUtil.ItemCallback<Characters>() {
         override fun areItemsTheSame(oldItem: Characters, newItem: Characters): Boolean {
             return oldItem.id == newItem.id
         }

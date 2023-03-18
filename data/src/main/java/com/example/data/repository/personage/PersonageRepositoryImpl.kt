@@ -1,6 +1,6 @@
 package com.example.data.repository.personage
 
-import com.example.data.network.episode.model.EpisodeResponse
+import com.example.data.network.episodes.model.EpisodeResponse
 import com.example.data.network.personage.PersonageRetrofitService
 import com.example.domain.characters.model.Response
 import com.example.domain.episodes.model.Episode

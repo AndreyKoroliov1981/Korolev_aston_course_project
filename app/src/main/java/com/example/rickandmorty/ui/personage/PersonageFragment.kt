@@ -12,10 +12,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.example.domain.episodes.model.Episode
 import com.example.rickandmorty.MainActivity
@@ -23,7 +21,7 @@ import com.example.rickandmorty.R
 import com.example.rickandmorty.app.App.Companion.appComponent
 import com.example.rickandmorty.common.IsErrorData
 import com.example.rickandmorty.databinding.FragmentPersonageBinding
-import com.example.rickandmorty.ui.personage.model.CharactersUI
+import com.example.rickandmorty.ui.personage.model.CharactersUi
 import com.example.rickandmorty.ui.personage.recycler.PersonageAdapter
 import com.example.rickandmorty.ui.personage.recycler.RVOnClickEpisodeListener
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -33,12 +31,10 @@ import kotlinx.coroutines.launch
 
 class PersonageFragment : Fragment() {
     private lateinit var binding: FragmentPersonageBinding
-    private var personage: CharactersUI? = null
+    private var personage: CharactersUi? = null
 
     @javax.inject.Inject
     lateinit var vmFactory: PersonageViewModel.PersonageViewModelFactory
-
-//    private lateinit var viewModel: PersonageViewModel
 
     private val viewModel: PersonageViewModel by viewModels {
         PersonageViewModel.providesFactory(
@@ -59,12 +55,12 @@ class PersonageFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentPersonageBinding.inflate(inflater, container, false)
+        appComponent.injectPersonageFragment(this)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        appComponent.injectPersonageFragment(this)
         (activity as? MainActivity)?.showBottomNavBar(false)
 
         setBackArrowNavigationListener()
@@ -159,7 +155,7 @@ class PersonageFragment : Fragment() {
             const val PARAM1 = "param1"
         }
 
-        fun newInstance(param1: CharactersUI): PersonageFragment =
+        fun newInstance(param1: CharactersUi): PersonageFragment =
             PersonageFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(Args.PARAM1, param1)

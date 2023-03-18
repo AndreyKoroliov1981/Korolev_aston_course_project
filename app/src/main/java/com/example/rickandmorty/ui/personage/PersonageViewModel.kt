@@ -7,7 +7,7 @@ import com.example.domain.episodes.model.Episode
 import com.example.domain.personage.PersonageInteractor
 import com.example.rickandmorty.common.BaseViewModel
 import com.example.rickandmorty.common.IsErrorData
-import com.example.rickandmorty.ui.personage.model.CharactersUI
+import com.example.rickandmorty.ui.personage.model.CharactersUi
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -15,19 +15,19 @@ import kotlinx.coroutines.delay
 
 class PersonageViewModel @AssistedInject constructor(
     private val personageInteractor: PersonageInteractor,
-    @Assisted private val personage: CharactersUI
+    @Assisted private val personage: CharactersUi
 ) : BaseViewModel<PersonageState>(PersonageState()) {
 
     @AssistedFactory
     interface PersonageViewModelFactory {
-        fun create(recordId: CharactersUI): PersonageViewModel
+        fun create(recordId: CharactersUi): PersonageViewModel
     }
 
     @Suppress("UNCHECKED_CAST")
     companion object {
         fun providesFactory(
             assistedFactory: PersonageViewModelFactory,
-            personage: CharactersUI
+            personage: CharactersUi
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return assistedFactory.create(personage) as T
@@ -57,6 +57,8 @@ class PersonageViewModel @AssistedInject constructor(
     fun onClickEpisode(item: Episode) {
         Log.d("my_tag","item = ${item.episode}")
     }
+
+    //TODO При нажатии на локацию (location) или же место происхождения (origin) необходимо открывать детали выбранной локации.
 
     fun onClickSendRequest() {
         Log.d("my_tag","PersonageViewModel onClickSendRequest")
