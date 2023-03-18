@@ -3,7 +3,6 @@ package com.example.rickandmorty.di
 import com.example.domain.characters.CharactersInteractor
 import com.example.domain.personage.PersonageInteractor
 import com.example.rickandmorty.ui.characters.CharactersViewModelFactory
-import com.example.rickandmorty.ui.personage.PersonageViewModelFactory
 import com.example.rickandmorty.ui.personage.model.CharactersUIMapper
 import dagger.Module
 import dagger.Provides
@@ -24,17 +23,6 @@ class AppModule {
         return CharactersViewModelFactory(
             charactersInteractor = charactersInteractor,
             charactersUIMapper = charactersUIMapper
-        )
-    }
-
-    @Provides
-    fun providePersonageViewModelFactory(
-        personageInteractor: PersonageInteractor,
-        //charactersUIMapper: CharactersUIMapper,
-    ): PersonageViewModelFactory {
-        return PersonageViewModelFactory(
-            personageInteractor = personageInteractor,
-          //  charactersUIMapper = charactersUIMapper
         )
     }
 }

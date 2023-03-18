@@ -10,10 +10,12 @@ import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.example.domain.episodes.model.Episode
 import com.example.rickandmorty.MainActivity
@@ -34,8 +36,16 @@ class PersonageFragment : Fragment() {
     private var personage: CharactersUI? = null
 
     @javax.inject.Inject
-    lateinit var vmFactory: PersonageViewModelFactory
-    private lateinit var viewModel: PersonageViewModel
+    lateinit var vmFactory: PersonageViewModel.PersonageViewModelFactory
+
+//    private lateinit var viewModel: PersonageViewModel
+
+    private val viewModel: PersonageViewModel by viewModels {
+        PersonageViewModel.providesFactory(
+            assistedFactory = vmFactory,
+            personage = arguments?.getParcelable(Args.PARAM1)!!
+        )
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,21 +65,22 @@ class PersonageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         appComponent.injectPersonageFragment(this)
-        viewModel = ViewModelProvider(this, vmFactory).get(PersonageViewModel::class.java)
         (activity as? MainActivity)?.showBottomNavBar(false)
 
         setBackArrowNavigationListener()
         setFields()
+        setPullToRefresh()
 
         binding.apply {
             lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
                     launch {
                         viewModel.stateFlow.collect {
+                            binding.pbLoadData.isVisible = it.dataLoading
                             if (it.episodes == emptyList<Episode>()) {
                                 rvEpisodes.isVisible = false
                             } else {
-                                Log.d("my_tag","it.episodes = ${it.episodes}")
+                                Log.d("my_tag", "it.episodes = ${it.episodes}")
                                 val episodesRVAdapter = PersonageAdapter(
                                     object : RVOnClickEpisodeListener {
                                         override fun onClicked(item: Episode) {
@@ -80,7 +91,6 @@ class PersonageFragment : Fragment() {
                                 rvEpisodes.adapter = episodesRVAdapter
                                 rvEpisodes.isVisible = true
                             }
-                            binding.pbLoadData.isVisible = it.dataLoading
                         }
                     }
 
@@ -94,7 +104,6 @@ class PersonageFragment : Fragment() {
                 }
             }
         }
-
     }
 
     private fun setFields() {
@@ -111,7 +120,6 @@ class PersonageFragment : Fragment() {
                 tvGender.text = personage!!.gender
                 tvLocation.text = personage!!.location.name
                 tvOrigin.text = personage!!.origin.name
-                viewModel.getEpisodes(personage!!.episode)
             }
         }
     }
@@ -119,6 +127,15 @@ class PersonageFragment : Fragment() {
     private fun setBackArrowNavigationListener() {
         binding.toolbar.setNavigationOnClickListener {
             parentFragmentManager.popBackStack()
+        }
+    }
+
+    private fun setPullToRefresh() {
+        binding.srRefresh.setOnRefreshListener {
+            binding.srRefresh.isRefreshing = true
+            setFields()
+            personage?.episode?.let { viewModel.getEpisodes(it) }
+            binding.srRefresh.isRefreshing = false
         }
     }
 

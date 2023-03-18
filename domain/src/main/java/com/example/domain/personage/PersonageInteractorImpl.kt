@@ -14,7 +14,6 @@ class PersonageInteractorImpl(
         if (episodes.size == 1) {
             queryString += ","
         }
-        println("queryString = $queryString")
         return personageRepository.getEpisodes(queryString)
     }
 }
