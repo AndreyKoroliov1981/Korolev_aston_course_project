@@ -5,9 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.domain.episodes.model.Episode
 import com.example.domain.locations.model.Locations
-import com.example.rickandmorty.databinding.ItemEpisodesBinding
 import com.example.rickandmorty.databinding.ItemLocationsBinding
 
 class LocationsAdapter(private val onItemCLick: RVOnClickLocationsListeners) :

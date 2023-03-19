@@ -19,18 +19,15 @@ class EpisodesRepositoryImpl(
         withContext(Dispatchers.IO) {
             currentPage++
             try {
-                Log.d("my_tag", "start getEpisodes")
                 val response = episodesRetrofitService.getAllEpisodes(currentPage).execute()
                 val responseBody : EpisodesResponse?
                 val responseError : String?
                 if (response.isSuccessful) {
-                    Log.d("my_tag", "response isSuccessful")
                     responseBody = response.body()
                     return@withContext Response(
                         data = episodesMapper.mapEpisodesFromNetwork(responseBody!!),
                         errorText = null)
                 } else {
-                    Log.d("my_tag", "response not Successful")
                     currentPage--
                     responseError = TEXT_NO_MORE_DATA
                     return@withContext Response(

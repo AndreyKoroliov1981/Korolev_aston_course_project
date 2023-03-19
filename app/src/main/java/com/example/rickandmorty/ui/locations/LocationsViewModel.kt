@@ -27,7 +27,7 @@ class LocationsViewModel (
         getLocations()
     }
 
-    fun mapLocationToEpisodesUi(item: Locations): LocationsUi {
+    fun mapLocationToLocationsUi(item: Locations): LocationsUi {
         return locationsUiMapper.mapLocationsFromDomain(item)
     }
 
@@ -41,7 +41,7 @@ class LocationsViewModel (
                 val responseListEpisodes =
                     locationsInteractor.getLocations(
                         searchName = state.searchName,
-                        searchEpisodes = state.searchType
+                        searchType = state.searchType
                     )
                 if (responseListEpisodes.errorText == null) {
                     val listEpisodes = responseListEpisodes.data ?: emptyList()
