@@ -8,10 +8,12 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import com.example.rickandmorty.MainActivity
+import com.example.rickandmorty.ShowBottomNavBar
 import com.example.rickandmorty.databinding.FragmentLocationsBinding
 
 class LocationsFragment : Fragment() {
     private lateinit var binding: FragmentLocationsBinding
+    private var showBottomNavBar : ShowBottomNavBar? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -26,6 +28,11 @@ class LocationsFragment : Fragment() {
             this,
             callback
         )
+        try {
+            showBottomNavBar = context as ShowBottomNavBar
+        } catch (castException: ClassCastException) {
+            // The activity does not implement the ShowBottomNavBar.
+        }
     }
 
     override fun onCreateView(
@@ -38,6 +45,6 @@ class LocationsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as? MainActivity)?.showBottomNavBar(true)
+        showBottomNavBar?.show(true)
     }
 }

@@ -9,13 +9,14 @@ import com.example.rickandmorty.ui.personage.model.CharactersUi
 import com.example.rickandmorty.ui.personage.model.CharactersUiMapper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
 const val STATUS_ALIVE = "Alive"
 const val STATUS_DEAD = "Dead"
 const val STATUS_UNKNOWN = "unknown"
 const val DEBOUNCE_MILS = 300L
 
-class CharactersViewModel(
+class CharactersViewModel (
     private val charactersInteractor: CharactersInteractor,
     private val charactersUiMapper: CharactersUiMapper,
 ) : BaseViewModel<CharactersState>(CharactersState()) {
@@ -23,6 +24,11 @@ class CharactersViewModel(
     private var job: Job? = null
 
     init {
+        refreshLoad()
+    }
+
+    fun refreshLoad() {
+        updateState { copy(characters = emptyList()) }
         charactersInteractor.setStartPage()
         getCharacters()
     }

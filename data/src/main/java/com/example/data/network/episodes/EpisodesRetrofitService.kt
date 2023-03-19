@@ -6,7 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface EpisodesRetrofitService {
- @GET("character")
+ @GET("episode")
  fun getAllEpisodes(
  @Query("page") page: Int
  ): Call<EpisodesResponse>

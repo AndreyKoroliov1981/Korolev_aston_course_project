@@ -1,5 +1,6 @@
 package com.example.data.repository.episodes
 
+import android.util.Log
 import com.example.data.network.episodes.EpisodesRetrofitService
 import com.example.data.network.episodes.model.EpisodesResponse
 import com.example.domain.characters.model.Response
@@ -18,15 +19,18 @@ class EpisodesRepositoryImpl(
         withContext(Dispatchers.IO) {
             currentPage++
             try {
+                Log.d("my_tag", "start getEpisodes")
                 val response = episodesRetrofitService.getAllEpisodes(currentPage).execute()
                 val responseBody : EpisodesResponse?
                 val responseError : String?
                 if (response.isSuccessful) {
+                    Log.d("my_tag", "response isSuccessful")
                     responseBody = response.body()
                     return@withContext Response(
                         data = episodesMapper.mapEpisodesFromNetwork(responseBody!!),
                         errorText = null)
                 } else {
+                    Log.d("my_tag", "response not Successful")
                     currentPage--
                     responseError = TEXT_NO_MORE_DATA
                     return@withContext Response(

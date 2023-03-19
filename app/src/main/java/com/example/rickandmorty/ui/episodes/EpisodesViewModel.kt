@@ -9,8 +9,9 @@ import com.example.rickandmorty.ui.episodes.model.EpisodesUi
 import com.example.rickandmorty.ui.episodes.model.EpisodesUiMapper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
-class EpisodesViewModel(
+class EpisodesViewModel (
     private val episodesInteractor: EpisodesInteractor,
     private val episodesUiMapper: EpisodesUiMapper,
 ) : BaseViewModel<EpisodesState>(EpisodesState()) {
@@ -18,6 +19,11 @@ class EpisodesViewModel(
     private var job: Job? = null
 
     init {
+        refreshLoad()
+    }
+
+    fun refreshLoad() {
+        updateState { copy(episodes = emptyList()) }
         episodesInteractor.setStartPage()
         getEpisodes()
     }

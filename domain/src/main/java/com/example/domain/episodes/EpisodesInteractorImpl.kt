@@ -1,6 +1,5 @@
 package com.example.domain.episodes
 
-import com.example.domain.characters.model.Characters
 import com.example.domain.characters.model.Response
 import com.example.domain.episodes.model.Episode
 
@@ -28,7 +27,6 @@ class EpisodesInteractorImpl(private val episodesRepository: EpisodesRepository)
                 if (answer.data[i].name.contains(searchName)) {
                     if (answer.data[i].episode.contains(searchEpisodes)) {
                         filterAnswer.add(answer.data[i])
-                        break
                     }
 
                 }

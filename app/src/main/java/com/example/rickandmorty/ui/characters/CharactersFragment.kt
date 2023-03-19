@@ -1,5 +1,6 @@
 package com.example.rickandmorty.ui.characters
 
+import android.content.Context
 import android.os.Bundle
 import android.view.*
 import android.widget.FrameLayout
@@ -17,6 +18,7 @@ import com.example.domain.characters.model.Characters
 import com.example.rickandmorty.FragmentsTags
 import com.example.rickandmorty.MainActivity
 import com.example.rickandmorty.R
+import com.example.rickandmorty.ShowBottomNavBar
 import com.example.rickandmorty.app.App.Companion.appComponent
 import com.example.rickandmorty.common.IsEmptyFilter
 import com.example.rickandmorty.common.IsErrorData
@@ -32,6 +34,7 @@ import kotlinx.coroutines.launch
 
 class CharactersFragment : Fragment() {
     private lateinit var binding: FragmentCharactersBinding
+    private var showBottomNavBar : ShowBottomNavBar? = null
 
     @javax.inject.Inject
     lateinit var vmFactory: CharactersViewModelFactory
@@ -54,6 +57,15 @@ class CharactersFragment : Fragment() {
         }
     )
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            showBottomNavBar = context as ShowBottomNavBar
+        } catch (castException: ClassCastException) {
+            // The activity does not implement the ShowBottomNavBar.
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -71,11 +83,12 @@ class CharactersFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, vmFactory).get(CharactersViewModel::class.java)
-        (activity as? MainActivity)?.showBottomNavBar(true)
+        showBottomNavBar?.show(true)
         binding.rvCharacters.adapter = charactersRVAdapter
         setRVScrollListeners()
         setChipFiltersListeners()
         setSearchViewQueryTextListeners()
+        setPullToRefresh()
 
         binding.apply {
             lifecycleScope.launch {
@@ -141,6 +154,14 @@ class CharactersFragment : Fragment() {
                 return false
             }
         })
+    }
+
+    private fun setPullToRefresh() {
+        binding.srRefresh.setOnRefreshListener {
+            binding.srRefresh.isRefreshing = true
+            viewModel.refreshLoad()
+            binding.srRefresh.isRefreshing = false
+        }
     }
 
     private fun setRVScrollListeners() {

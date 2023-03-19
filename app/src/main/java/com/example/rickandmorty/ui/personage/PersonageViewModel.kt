@@ -12,6 +12,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
 class PersonageViewModel @AssistedInject constructor(
     private val personageInteractor: PersonageInteractor,

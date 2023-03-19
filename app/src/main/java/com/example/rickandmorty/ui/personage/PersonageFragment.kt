@@ -1,5 +1,6 @@
 package com.example.rickandmorty.ui.personage
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -18,6 +19,7 @@ import com.bumptech.glide.Glide
 import com.example.domain.episodes.model.Episode
 import com.example.rickandmorty.MainActivity
 import com.example.rickandmorty.R
+import com.example.rickandmorty.ShowBottomNavBar
 import com.example.rickandmorty.app.App.Companion.appComponent
 import com.example.rickandmorty.common.IsErrorData
 import com.example.rickandmorty.databinding.FragmentPersonageBinding
@@ -32,6 +34,7 @@ import kotlinx.coroutines.launch
 class PersonageFragment : Fragment() {
     private lateinit var binding: FragmentPersonageBinding
     private var personage: CharactersUi? = null
+    private var showBottomNavBar : ShowBottomNavBar? = null
 
     @javax.inject.Inject
     lateinit var vmFactory: PersonageViewModel.PersonageViewModelFactory
@@ -50,6 +53,15 @@ class PersonageFragment : Fragment() {
         }
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            showBottomNavBar = context as ShowBottomNavBar
+        } catch (castException: ClassCastException) {
+            // The activity does not implement the ShowBottomNavBar.
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -61,7 +73,7 @@ class PersonageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as? MainActivity)?.showBottomNavBar(false)
+        showBottomNavBar?.show(false)
 
         setBackArrowNavigationListener()
         setFields()

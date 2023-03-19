@@ -11,4 +11,6 @@
     <string name="text_personage">Персонаж</string>
     <string name="hint_string_episodes">string episodes, example:S01E06</string>
     <string name="hint_name_series">name series</string>
+    <string name="name_locations_hint">name locations</string>
+    <string name="name_type_locations_hint">name type</string>
 </resources>

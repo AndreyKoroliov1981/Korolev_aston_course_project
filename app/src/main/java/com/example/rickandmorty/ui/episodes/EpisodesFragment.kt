@@ -21,6 +21,7 @@ import com.example.domain.episodes.model.Episode
 import com.example.rickandmorty.FragmentsTags
 import com.example.rickandmorty.MainActivity
 import com.example.rickandmorty.R
+import com.example.rickandmorty.ShowBottomNavBar
 import com.example.rickandmorty.app.App
 import com.example.rickandmorty.app.App.Companion.appComponent
 import com.example.rickandmorty.common.IsEmptyFilter
@@ -39,6 +40,7 @@ import kotlinx.coroutines.launch
 
 class EpisodesFragment: Fragment() {
     private lateinit var binding: FragmentEpisodesBinding
+    private var showBottomNavBar : ShowBottomNavBar? = null
 
     @javax.inject.Inject
     lateinit var vmFactory: EpisodesViewModelFactory
@@ -70,6 +72,11 @@ class EpisodesFragment: Fragment() {
             this,
             callback
         )
+        try {
+            showBottomNavBar = context as ShowBottomNavBar
+        } catch (castException: ClassCastException) {
+            // The activity does not implement the ShowBottomNavBar.
+        }
     }
 
     override fun onCreateView(
@@ -83,11 +90,12 @@ class EpisodesFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as? MainActivity)?.showBottomNavBar(true)
+        showBottomNavBar?.show(true)
         viewModel = ViewModelProvider(this, vmFactory).get(EpisodesViewModel::class.java)
         binding.rvEpisodes.adapter = episodesRVAdapter
         setRVScrollListeners()
         setSearchViewQueryTextListeners()
+        setPullToRefresh()
 
         binding.apply {
             lifecycleScope.launch {
@@ -122,6 +130,14 @@ class EpisodesFragment: Fragment() {
     override fun onResume() {
         super.onResume()
         requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING)
+    }
+
+    private fun setPullToRefresh() {
+        binding.srRefresh.setOnRefreshListener {
+            binding.srRefresh.isRefreshing = true
+            viewModel.refreshLoad()
+            binding.srRefresh.isRefreshing = false
+        }
     }
 
     private fun setSearchViewQueryTextListeners() {
