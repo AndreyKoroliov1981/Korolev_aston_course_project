@@ -7,6 +7,7 @@ import com.example.domain.episodes.model.Episode
 import com.example.domain.personage.PersonageInteractor
 import com.example.rickandmorty.common.BaseViewModel
 import com.example.rickandmorty.common.IsErrorData
+import com.example.rickandmorty.ui.characters.DEBOUNCE_MILS
 import com.example.rickandmorty.ui.personage.model.CharactersUi
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -42,7 +43,7 @@ class PersonageViewModel @AssistedInject constructor(
 
     fun getEpisodes(episodes: List<String>) {
         launch {
-            delay(300)
+            delay(DEBOUNCE_MILS)
             updateState { copy(dataLoading = true) }
             val responseListEpisode = personageInteractor.getEpisodes(episodes)
             if (responseListEpisode.errorText == null) {

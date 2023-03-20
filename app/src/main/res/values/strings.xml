@@ -13,4 +13,5 @@
     <string name="hint_name_series">name series</string>
     <string name="name_locations_hint">name locations</string>
     <string name="name_type_locations_hint">name type</string>
+    <string name="textPlace">Локация</string>
 </resources>

@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.domain.characters.model.Characters
 import com.example.domain.episodes.model.Episode
 import com.example.domain.locations.model.Locations
+import com.example.rickandmorty.FragmentsTags
 import com.example.rickandmorty.MainActivity
 import com.example.rickandmorty.R
 import com.example.rickandmorty.ShowBottomNavBar
@@ -28,6 +29,7 @@ import com.example.rickandmorty.ui.episodes.recycler.EpisodesAdapter
 import com.example.rickandmorty.ui.episodes.recycler.RVOnClickEpisodesListeners
 import com.example.rickandmorty.ui.locations.recycler.LocationsAdapter
 import com.example.rickandmorty.ui.locations.recycler.RVOnClickLocationsListeners
+import com.example.rickandmorty.ui.place.PlaceFragment
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
@@ -45,11 +47,11 @@ class LocationsFragment : Fragment() {
         object : RVOnClickLocationsListeners {
             override fun onClicked(item: Locations) {
                 val itemUi = viewModel.mapLocationToLocationsUi(item)
-                //TODO add transaction
-//                parentFragmentManager.beginTransaction()
-//                    .replace(R.id.fragment_container_view, PersonageFragment.newInstance(itemUI), FragmentsTags.Personage.tag)
-//                    .addToBackStack(null)
-//                    .commit()
+
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container_view, PlaceFragment.newInstance(itemUi), FragmentsTags.Place.tag)
+                    .addToBackStack(null)
+                    .commit()
             }
         }
     )
