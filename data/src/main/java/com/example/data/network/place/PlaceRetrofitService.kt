@@ -9,6 +9,6 @@ import retrofit2.http.Path
 interface PlaceRetrofitService {
     @GET("character/{queryString}")
     fun getCharacters(
-        @Path("queryString") queryString:String
-    ) : Observable<List<PersonResponse>>
+        @Path("queryString") queryString: String
+    ): Observable<List<PersonResponse>>
 }

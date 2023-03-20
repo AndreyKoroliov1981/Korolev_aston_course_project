@@ -1,4 +1,4 @@
-package com.example.rickandmorty.ui.place
+package com.example.rickandmorty.ui.series
 
 import android.content.Context
 import android.os.Bundle
@@ -21,28 +21,28 @@ import com.example.rickandmorty.R
 import com.example.rickandmorty.ShowBottomNavBar
 import com.example.rickandmorty.app.App.Companion.appComponent
 import com.example.rickandmorty.common.IsErrorData
-import com.example.rickandmorty.databinding.FragmentPlaceBinding
+import com.example.rickandmorty.databinding.FragmentSeriesBinding
 import com.example.rickandmorty.ui.characters.recycler.CharactersAdapter
 import com.example.rickandmorty.ui.characters.recycler.RVOnClickCharactersListeners
-import com.example.rickandmorty.ui.locations.model.LocationsUi
+import com.example.rickandmorty.ui.episodes.model.EpisodesUi
 import com.example.rickandmorty.ui.personage.PersonageFragment
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class PlaceFragment : Fragment() {
-    private lateinit var binding: FragmentPlaceBinding
-    private var place: LocationsUi? = null
+class SeriesFragment: Fragment() {
+    private lateinit var binding: FragmentSeriesBinding
+    private var series: EpisodesUi? = null
     private var showBottomNavBar: ShowBottomNavBar? = null
 
     @javax.inject.Inject
-    lateinit var vmFactory: PlaceViewModel.PlaceViewModelFactory
+    lateinit var vmFactory: SeriesViewModel.PlaceViewModelFactory
 
-    private val viewModel: PlaceViewModel by viewModels {
-        PlaceViewModel.providesFactory(
+    private val viewModel: SeriesViewModel by viewModels {
+        SeriesViewModel.providesFactory(
             assistedFactory = vmFactory,
-            place = arguments?.getParcelable(Args.PARAM1)!!
+            series = arguments?.getParcelable(Args.PARAM1)!!
         )
     }
 
@@ -66,7 +66,7 @@ class PlaceFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let { args ->
-            place = args.getParcelable(Args.PARAM1)
+            series = args.getParcelable(Args.PARAM1)
         }
     }
 
@@ -83,8 +83,8 @@ class PlaceFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentPlaceBinding.inflate(inflater, container, false)
-        appComponent.injectPlaceFragment(this)
+        binding = FragmentSeriesBinding.inflate(inflater, container, false)
+        appComponent.injectSeriesFragment(this)
         return binding.root
     }
 
@@ -125,10 +125,10 @@ class PlaceFragment : Fragment() {
 
     private fun setFields() {
         with(binding) {
-            if (place != null) {
-                tvName.text = place!!.name
-                tvType.text = place!!.type
-                tvDimension.text = place!!.dimension
+            if (series != null) {
+                tvName.text = series!!.name
+                tvAirDate.text = series!!.airDate
+                tvEpisode.text = series!!.episode
             }
         }
     }
@@ -143,7 +143,7 @@ class PlaceFragment : Fragment() {
         binding.srRefresh.setOnRefreshListener {
             binding.srRefresh.isRefreshing = true
             setFields()
-            place?.residents?.let { viewModel.refreshLoad(it) }
+            series?.characters?.let { viewModel.refreshLoad(it) }
             binding.srRefresh.isRefreshing = false
         }
     }
@@ -163,16 +163,18 @@ class PlaceFragment : Fragment() {
         snackBarView.show()
     }
 
+
     companion object {
         private object Args {
             const val PARAM1 = "param1"
         }
 
-        fun newInstance(param1: LocationsUi): PlaceFragment =
-            PlaceFragment().apply {
+        fun newInstance(param1: EpisodesUi): SeriesFragment =
+            SeriesFragment().apply {
                 arguments = Bundle().apply {
                     putParcelable(Args.PARAM1, param1)
                 }
             }
     }
+
 }

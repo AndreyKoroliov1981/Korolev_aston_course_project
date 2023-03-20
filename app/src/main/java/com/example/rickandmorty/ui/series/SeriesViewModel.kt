@@ -1,12 +1,13 @@
-package com.example.rickandmorty.ui.place
+package com.example.rickandmorty.ui.series
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.domain.characters.model.Characters
-import com.example.domain.place.PlaceInteractor
+import com.example.domain.series.SeriesInteractor
 import com.example.rickandmorty.common.BaseViewModel
 import com.example.rickandmorty.common.IsErrorData
 import com.example.rickandmorty.ui.characters.DEBOUNCE_MILS
+import com.example.rickandmorty.ui.episodes.model.EpisodesUi
 import com.example.rickandmorty.ui.locations.model.LocationsUi
 import com.example.rickandmorty.ui.personage.model.CharactersUi
 import com.example.rickandmorty.ui.personage.model.CharactersUiMapper
@@ -15,31 +16,31 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.delay
 
-class PlaceViewModel @AssistedInject constructor(
-    private val placeInteractor: PlaceInteractor,
+class SeriesViewModel @AssistedInject constructor(
+    private val seriesInteractor: SeriesInteractor,
     private val charactersUiMapper: CharactersUiMapper,
-    @Assisted private val place: LocationsUi
-) : BaseViewModel<PlaceState>(PlaceState()) {
+    @Assisted private val series: EpisodesUi
+) : BaseViewModel<SeriesState>(SeriesState()) {
 
     @AssistedFactory
     interface PlaceViewModelFactory {
-        fun create(recordId: LocationsUi): PlaceViewModel
+        fun create(recordId: EpisodesUi): SeriesViewModel
     }
 
     @Suppress("UNCHECKED_CAST")
     companion object {
         fun providesFactory(
             assistedFactory: PlaceViewModelFactory,
-            place: LocationsUi
+            series: EpisodesUi
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return assistedFactory.create(place) as T
+                return assistedFactory.create(series) as T
             }
         }
     }
 
     init {
-        getResidents(place.residents)
+        getResidents(series.characters)
     }
 
     fun refreshLoad(residents: List<String>) {
@@ -55,7 +56,7 @@ class PlaceViewModel @AssistedInject constructor(
         launch {
             delay(DEBOUNCE_MILS)
             updateState { copy(dataLoading = true) }
-            val responseListResidents = placeInteractor.getResidents(residents)
+            val responseListResidents = seriesInteractor.getResidents(residents)
             if (responseListResidents.errorText == null) {
                 val listResidents = responseListResidents.data ?: emptyList()
                 updateState { copy(residents = listResidents) }
@@ -67,6 +68,6 @@ class PlaceViewModel @AssistedInject constructor(
     }
 
     fun onClickSendRequest() {
-        getResidents(place.residents)
+        getResidents(series.characters)
     }
 }

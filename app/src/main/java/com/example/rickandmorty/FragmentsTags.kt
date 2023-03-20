@@ -6,4 +6,5 @@ enum class FragmentsTags(val tag: String) {
     Episodes("Episodes"),
     Personage("Personage"),
     Place("Place"),
+    Series("Series"),
 }

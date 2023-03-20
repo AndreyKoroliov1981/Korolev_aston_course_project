@@ -15,6 +15,8 @@ import com.example.domain.personage.PersonageRepository
 import com.example.domain.place.PlaceInteractor
 import com.example.domain.place.PlaceInteractorImpl
 import com.example.domain.place.PlaceRepository
+import com.example.domain.series.SeriesInteractor
+import com.example.domain.series.SeriesInteractorImpl
 import dagger.Module
 import dagger.Provides
 
@@ -49,6 +51,15 @@ class DomainModule {
         placeRepository: PlaceRepository
     ): PlaceInteractor {
         return PlaceInteractorImpl(
+            placeRepository = placeRepository
+        )
+    }
+
+    @Provides
+    fun provideSeriesInteractor(
+        placeRepository: PlaceRepository
+    ): SeriesInteractor {
+        return SeriesInteractorImpl(
             placeRepository = placeRepository
         )
     }
