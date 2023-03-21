@@ -1,5 +1,8 @@
 package com.example.rickandmorty.di
 
+import android.content.Context
+import com.example.data.database.HistoryManager
+import com.example.data.database.HistoryRepository
 import com.example.data.network.characters.CharactersCommon
 import com.example.data.network.characters.CharactersRetrofitService
 import com.example.data.network.episodes.EpisodesCommon
@@ -34,11 +37,13 @@ class DataModule {
     @Provides
     fun provideCharactersRepository(
         charactersMapper: CharactersMapper,
-        charactersRetrofitService: CharactersRetrofitService
+        charactersRetrofitService: CharactersRetrofitService,
+        historyRepository : HistoryRepository
     ): CharactersRepository {
         return CharactersRepositoryImpl(
             charactersMapper = charactersMapper,
-            charactersRetrofitService = charactersRetrofitService
+            charactersRetrofitService = charactersRetrofitService,
+            historyRepository = historyRepository
         )
     }
 
@@ -141,5 +146,10 @@ class DataModule {
     @Provides
     fun providePlaceRetrofitService(): PlaceRetrofitService {
         return PlaceCommon.placeRetrofitService
+    }
+
+    @Provides
+    fun provideHistoryRepository(context: Context): HistoryRepository {
+        return HistoryManager(context = context)
     }
 }

@@ -1,5 +1,6 @@
 package com.example.rickandmorty.ui.characters
 
+import android.util.Log
 import com.example.domain.characters.CharactersInteractor
 import com.example.domain.characters.model.Characters
 import com.example.rickandmorty.common.BaseViewModel
@@ -61,12 +62,20 @@ class CharactersViewModel (
                     filters = filters
                 )
             if (responseListCharacters.errorText == null) {
+                Log.d("my_tag","errorText == null")
                 val listCharacters = responseListCharacters.data ?: emptyList()
                 val newCharacters = state.characters + listCharacters
                 updateState { copy(characters = newCharacters) }
                 isCheckedEndLoadFromApi = listCharacters.isEmpty()
             } else {
                 isCheckedEndLoadFromApi = false
+                Log.d("my_tag","errorText != null")
+                if (responseListCharacters.data != null) {
+                    Log.d("my_tag","data != null")
+                    Log.d("my_tag","data = ${responseListCharacters.data}")
+                    val newCharacters = responseListCharacters.data!!
+                    updateState { copy(characters = newCharacters) }
+                }
                 sideEffectSharedFlow.emit(IsErrorData(responseListCharacters.errorText!!))
             }
         }

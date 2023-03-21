@@ -1,5 +1,6 @@
 package com.example.data.repository.characters
 
+import com.example.data.database.HistoryRepository
 import com.example.data.network.characters.CharactersRetrofitService
 import com.example.data.network.characters.model.CharactersResponse
 import com.example.domain.characters.CharactersRepository
@@ -11,7 +12,7 @@ import kotlinx.coroutines.withContext
 class CharactersRepositoryImpl(
     private val charactersMapper: CharactersMapper,
     private var charactersRetrofitService: CharactersRetrofitService,
-    //private var historyRepository: HistoryRepository
+    private var historyRepository: HistoryRepository
 ) : CharactersRepository {
     override suspend fun getCharacters(): Response<List<Characters>> =
         withContext(Dispatchers.IO) {
@@ -22,6 +23,10 @@ class CharactersRepositoryImpl(
                 val responseError : String?
                 if (response.isSuccessful) {
                     responseBody = response.body()
+                    val historyData =  charactersMapper.mapCharactersToDb(responseBody!!)
+                    for (i in historyData.indices) {
+                        historyRepository.insertNote(historyData[i])
+                    }
                     return@withContext Response(
                         data = charactersMapper.mapCharactersFromNetwork(responseBody!!),
                         errorText = null)
@@ -35,8 +40,9 @@ class CharactersRepositoryImpl(
 
             } catch (e: java.lang.Exception) {
                 currentPage--
+                val historyData = charactersMapper.mapCharactersFromDb(historyRepository.allHistory())
                 return@withContext Response(
-                    data = null,
+                    data = historyData,
                     errorText = e.toString())
             }
         }

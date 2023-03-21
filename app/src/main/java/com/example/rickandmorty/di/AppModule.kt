@@ -1,5 +1,6 @@
 package com.example.rickandmorty.di
 
+import android.content.Context
 import com.example.domain.characters.CharactersInteractor
 import com.example.domain.episodes.EpisodesInteractor
 import com.example.domain.locations.LocationsInteractor
@@ -13,7 +14,12 @@ import dagger.Module
 import dagger.Provides
 
 @Module
-class AppModule {
+class AppModule(val context: Context) {
+
+    @Provides
+    fun provideContext(): Context {
+        return context
+    }
 
     @Provides
     fun provideCharactersUiMapper(): CharactersUiMapper {
