@@ -2,7 +2,7 @@ package com.example.rickandmorty.di
 
 import android.content.Context
 import com.example.data.database.HistoryManager
-import com.example.data.database.HistoryRepository
+import com.example.data.repository.cache.HistoryRepository
 import com.example.data.network.characters.CharactersCommon
 import com.example.data.network.characters.CharactersRetrofitService
 import com.example.data.network.episodes.EpisodesCommon
@@ -13,6 +13,8 @@ import com.example.data.network.personage.PersonageCommon
 import com.example.data.network.personage.PersonageRetrofitService
 import com.example.data.network.place.PlaceCommon
 import com.example.data.network.place.PlaceRetrofitService
+import com.example.data.repository.cache.HistoryRepositoryEpisodes
+import com.example.data.repository.cache.HistoryRepositoryLocations
 import com.example.data.repository.characters.CharactersMapper
 import com.example.data.repository.characters.CharactersRepositoryImpl
 import com.example.data.repository.episodes.EpisodesMapper
@@ -88,11 +90,13 @@ class DataModule {
     @Provides
     fun provideEpisodesRepository(
         episodesMapper: EpisodesMapper,
-        episodesRetrofitService: EpisodesRetrofitService
+        episodesRetrofitService: EpisodesRetrofitService,
+        historyRepository: HistoryRepositoryEpisodes
     ): EpisodesRepository {
         return EpisodesRepositoryImpl(
             episodesMapper = episodesMapper,
-            episodesRetrofitService = episodesRetrofitService
+            episodesRetrofitService = episodesRetrofitService,
+            historyRepository = historyRepository
         )
     }
 
@@ -109,11 +113,13 @@ class DataModule {
     @Provides
     fun provideLocationsRepository(
         locationsMapper: LocationsMapper,
-        locationsRetrofitService: LocationsRetrofitService
+        locationsRetrofitService: LocationsRetrofitService,
+        historyRepository: HistoryRepositoryLocations
     ): LocationsRepository {
         return LocationsRepositoryImpl(
             locationsMapper = locationsMapper,
-            locationsRetrofitService = locationsRetrofitService
+            locationsRetrofitService = locationsRetrofitService,
+            historyRepository = historyRepository
         )
     }
 
@@ -150,6 +156,16 @@ class DataModule {
 
     @Provides
     fun provideHistoryRepository(context: Context): HistoryRepository {
+        return HistoryManager(context = context)
+    }
+
+    @Provides
+    fun provideHistoryRepositoryLocations(context: Context): HistoryRepositoryLocations {
+        return HistoryManager(context = context)
+    }
+
+    @Provides
+    fun provideHistoryRepositoryEpisodes(context: Context): HistoryRepositoryEpisodes {
         return HistoryManager(context = context)
     }
 }

@@ -1,6 +1,6 @@
 package com.example.data.repository.characters
 
-import com.example.data.database.HistoryRepository
+import com.example.data.repository.cache.HistoryRepository
 import com.example.data.network.characters.CharactersRetrofitService
 import com.example.data.network.characters.model.CharactersResponse
 import com.example.domain.characters.CharactersRepository
@@ -28,7 +28,7 @@ class CharactersRepositoryImpl(
                         historyRepository.insertNote(historyData[i])
                     }
                     return@withContext Response(
-                        data = charactersMapper.mapCharactersFromNetwork(responseBody!!),
+                        data = charactersMapper.mapCharactersFromNetwork(responseBody),
                         errorText = null)
                 } else {
                     currentPage--

@@ -51,6 +51,10 @@ class EpisodesViewModel (
                     updateState { copy(episodes = newEpisodes) }
                 } else {
                     isCheckedEndLoadFromApi = false
+                    if (responseListEpisodes.data != null) {
+                        val newEpisodes = responseListEpisodes.data!!
+                        updateState { copy(episodes = newEpisodes) }
+                    }
                     sideEffectSharedFlow.emit(IsErrorData(responseListEpisodes.errorText!!))
                 }
                 updateState { copy(dataLoading = false) }

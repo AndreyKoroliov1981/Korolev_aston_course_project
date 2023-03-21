@@ -97,10 +97,8 @@ class CharactersFragment : Fragment() {
                     launch {
                         viewModel.stateFlow.collect {
                             if (it.characters == emptyList<Characters>()) {
-                                Log.d("my_tag","it.characters == emptyList")
                                 rvCharacters.isVisible = false
                             } else {
-                                Log.d("my_tag","it.characters == ${it.characters}")
                                 charactersRVAdapter.updateList(it.characters)
                                 rvCharacters.isVisible = true
                             }

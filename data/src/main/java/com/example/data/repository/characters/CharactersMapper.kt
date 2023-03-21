@@ -1,13 +1,11 @@
 package com.example.data.repository.characters
 
-import com.example.data.database.model.CharactersDb
-import com.example.data.database.model.LocationDb
+import com.example.data.database.characters.CharactersDb
+import com.example.data.database.characters.LocationDb
 import com.example.data.network.characters.model.CharactersResponse
 import com.example.data.network.characters.model.LocationResponse
-import com.example.data.network.episodes.model.EpisodeResponse
 import com.example.domain.characters.model.Characters
 import com.example.domain.characters.model.Location
-import com.example.domain.episodes.model.Episode
 
 class CharactersMapper {
     fun mapCharactersFromNetwork(charactersResponse: CharactersResponse): List<Characters> {
