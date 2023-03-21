@@ -54,7 +54,6 @@ class SeriesViewModel @AssistedInject constructor(
 
     private fun getResidents(residents: List<String>) {
         launch {
-            delay(DEBOUNCE_MILS)
             updateState { copy(dataLoading = true) }
             val responseListResidents = seriesInteractor.getResidents(residents)
             if (responseListResidents.errorText == null) {

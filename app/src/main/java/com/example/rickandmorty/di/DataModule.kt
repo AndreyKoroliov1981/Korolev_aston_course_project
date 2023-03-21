@@ -17,6 +17,7 @@ import com.example.data.repository.episodes.EpisodesRepositoryImpl
 import com.example.data.repository.locations.LocationsMapper
 import com.example.data.repository.locations.LocationsRepositoryImpl
 import com.example.data.repository.personage.EpisodeMapper
+import com.example.data.repository.personage.LocationeMapper
 import com.example.data.repository.personage.PersonageRepositoryImpl
 import com.example.data.repository.place.PlaceMapper
 import com.example.data.repository.place.PlaceRepositoryImpl
@@ -54,12 +55,19 @@ class DataModule {
     @Provides
     fun providePersonageRepository(
         episodeMapper: EpisodeMapper,
+        locationeMapper: LocationeMapper,
         personageRetrofitService: PersonageRetrofitService
     ): PersonageRepository {
         return PersonageRepositoryImpl(
             episodeMapper = episodeMapper,
+            locationeMapper = locationeMapper,
             personageRetrofitService = personageRetrofitService
         )
+    }
+
+    @Provides
+    fun provideLocationeMapper(): LocationeMapper {
+        return LocationeMapper()
     }
 
     @Provides

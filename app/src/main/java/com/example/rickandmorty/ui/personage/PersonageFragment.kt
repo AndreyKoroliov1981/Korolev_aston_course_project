@@ -17,15 +17,19 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.example.domain.episodes.model.Episode
+import com.example.rickandmorty.FragmentsTags
 import com.example.rickandmorty.MainActivity
 import com.example.rickandmorty.R
 import com.example.rickandmorty.ShowBottomNavBar
 import com.example.rickandmorty.app.App.Companion.appComponent
 import com.example.rickandmorty.common.IsErrorData
 import com.example.rickandmorty.databinding.FragmentPersonageBinding
+import com.example.rickandmorty.ui.locations.model.LocationsUi
 import com.example.rickandmorty.ui.personage.model.CharactersUi
 import com.example.rickandmorty.ui.personage.recycler.PersonageAdapter
 import com.example.rickandmorty.ui.personage.recycler.RVOnClickEpisodeListener
+import com.example.rickandmorty.ui.place.PlaceFragment
+import com.example.rickandmorty.ui.series.SeriesFragment
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
@@ -34,7 +38,7 @@ import kotlinx.coroutines.launch
 class PersonageFragment : Fragment() {
     private lateinit var binding: FragmentPersonageBinding
     private var personage: CharactersUi? = null
-    private var showBottomNavBar : ShowBottomNavBar? = null
+    private var showBottomNavBar: ShowBottomNavBar? = null
 
     @javax.inject.Inject
     lateinit var vmFactory: PersonageViewModel.PersonageViewModelFactory
@@ -77,6 +81,7 @@ class PersonageFragment : Fragment() {
 
         setBackArrowNavigationListener()
         setFields()
+        setLocationsListener()
         setPullToRefresh()
 
         binding.apply {
@@ -91,7 +96,15 @@ class PersonageFragment : Fragment() {
                                 val episodesRVAdapter = PersonageAdapter(
                                     object : RVOnClickEpisodeListener {
                                         override fun onClicked(item: Episode) {
-                                            viewModel.onClickEpisode(item)
+                                            val itemUi = viewModel.onClickEpisode(item)
+                                            parentFragmentManager.beginTransaction()
+                                                .replace(
+                                                    R.id.fragment_container_view,
+                                                    SeriesFragment.newInstance(itemUi),
+                                                    FragmentsTags.Series.tag
+                                                )
+                                                .addToBackStack(null)
+                                                .commit()
                                         }
                                     }, it.episodes
                                 )
@@ -110,6 +123,30 @@ class PersonageFragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    private fun setLocationsListener() {
+        binding.tvLocation.setOnClickListener {
+            gotoLocationsScreen(viewModel.onClickLocations())
+        }
+
+        binding.tvOrigin.setOnClickListener {
+            gotoLocationsScreen(viewModel.onClickOrigins())
+        }
+    }
+
+    private fun gotoLocationsScreen(itemUi: LocationsUi?) {
+        Log.d("my_tag", "gotoLocationsScreen itemUi = $itemUi")
+        if (itemUi != null) {
+            parentFragmentManager.beginTransaction()
+                .replace(
+                    R.id.fragment_container_view,
+                    PlaceFragment.newInstance(itemUi),
+                    FragmentsTags.Place.tag
+                )
+                .addToBackStack(null)
+                .commit()
         }
     }
 
