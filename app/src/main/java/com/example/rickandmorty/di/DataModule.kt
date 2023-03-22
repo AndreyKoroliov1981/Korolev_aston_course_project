@@ -140,11 +140,13 @@ class DataModule {
     @Provides
     fun providePlaceRepository(
         placeMapper: PlaceMapper,
-        placeRetrofitService: PlaceRetrofitService
+        placeRetrofitService: PlaceRetrofitService,
+        historyRepositoryCharacters: HistoryRepositoryCharacters
     ): PlaceRepository {
         return PlaceRepositoryImpl(
             placeMapper = placeMapper,
-            placeRetrofitService = placeRetrofitService
+            placeRetrofitService = placeRetrofitService,
+            historyRepositoryCharacters = historyRepositoryCharacters
         )
     }
 

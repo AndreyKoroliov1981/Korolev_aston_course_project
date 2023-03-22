@@ -59,6 +59,10 @@ class PlaceViewModel @AssistedInject constructor(
                 val listResidents = responseListResidents.data ?: emptyList()
                 updateState { copy(residents = listResidents) }
             } else {
+                if (responseListResidents.data != null) {
+                    val newCharacters = responseListResidents.data!!
+                    updateState { copy(residents = newCharacters) }
+                }
                 sideEffectSharedFlow.emit(IsErrorData(responseListResidents.errorText!!))
             }
             updateState { copy(dataLoading = false) }

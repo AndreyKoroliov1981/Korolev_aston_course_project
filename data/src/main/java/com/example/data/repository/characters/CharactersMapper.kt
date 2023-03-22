@@ -72,8 +72,8 @@ class CharactersMapper {
                 species = charactersDb[i].species,
                 type = charactersDb[i].type,
                 gender = charactersDb[i].gender,
-                origin = mapCharactersFromDb(charactersDb[i].origin),
-                location = mapCharactersFromDb(charactersDb[i].location),
+                origin = mapLocatFromDb(charactersDb[i].origin),
+                location = mapLocatFromDb(charactersDb[i].location),
                 image = charactersDb[i].image,
                 episode = charactersDb[i].episode,
                 url = charactersDb[i].url,
@@ -84,7 +84,7 @@ class CharactersMapper {
         return newList
     }
 
-    private fun mapCharactersFromDb(location: LocationDb) = Location(
+    private fun mapLocatFromDb(location: LocationDb) = Location(
         name = location.name,
         url = location.url
     )
