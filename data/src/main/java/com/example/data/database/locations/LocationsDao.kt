@@ -18,5 +18,5 @@ interface LocationsDao {
     suspend fun getAllHistory(): List<LocationsDb>
 
     @Query("SELECT * FROM saved_locations WHERE id = :locationsId")
-    suspend fun getById(locationsId: Long): LocationsDb
+    suspend fun getById(locationsId: Long): LocationsDb?
 }

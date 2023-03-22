@@ -18,7 +18,7 @@ class HistoryRealizationEpisodes(private val historyDao: EpisodesDao) {
         historyDao.deleteAllHistory()
     }
 
-    suspend fun getById(recordId: Long): EpisodesDb {
+    suspend fun getById(recordId: Long): EpisodesDb? {
         return historyDao.getById(recordId)
     }
 }

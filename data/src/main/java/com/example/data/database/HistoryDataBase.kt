@@ -16,7 +16,6 @@ import com.example.data.database.locations.LocationsDb
 abstract class HistoryDataBase : RoomDatabase() {
     abstract fun getHistoryDao(): CharactersDao
     abstract fun getLocationsDao(): LocationsDao
-
     abstract fun getEpisodesDao(): EpisodesDao
 
     companion object {

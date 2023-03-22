@@ -7,5 +7,5 @@ interface HistoryRepositoryLocations {
     suspend fun insertNoteLocations(locationsDb: LocationsDb): Long
     suspend fun deleteNoteLocations(locationsDb: LocationsDb)
     suspend fun deleteAllLocations()
-    suspend fun getByIdLocations(locationsId: Long): LocationsDb
+    suspend fun getByIdLocations(locationsId: Long): LocationsDb?
 }

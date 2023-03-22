@@ -7,5 +7,5 @@ interface HistoryRepositoryEpisodes {
     suspend fun insertNoteEpisodes(episodesDb: EpisodesDb): Long
     suspend fun deleteNoteEpisodes(episodesDb: EpisodesDb)
     suspend fun deleteAllEpisodes()
-    suspend fun getByIdEpisodes(episodesId: Long): EpisodesDb
+    suspend fun getByIdEpisodes(episodesId: Long): EpisodesDb?
 }

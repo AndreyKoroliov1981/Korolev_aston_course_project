@@ -13,10 +13,9 @@ interface EpisodesDao {
     @Query("DELETE FROM saved_episodes")
     suspend fun deleteAllHistory()
 
-
     @Query("SELECT * FROM saved_episodes")
     suspend fun getAllHistory(): List<EpisodesDb>
 
     @Query("SELECT * FROM saved_episodes WHERE id = :episodesId")
-    suspend fun getById(episodesId: Long): EpisodesDb
+    suspend fun getById(episodesId: Long): EpisodesDb?
 }

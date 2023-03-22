@@ -18,5 +18,5 @@ interface CharactersDao {
     suspend fun getAllHistory(): List<CharactersDb>
 
     @Query("SELECT * FROM saved_characters WHERE id = :charactersId")
-    suspend fun getById(charactersId: Long): CharactersDb
+    suspend fun getById(charactersId: Long): CharactersDb?
 }

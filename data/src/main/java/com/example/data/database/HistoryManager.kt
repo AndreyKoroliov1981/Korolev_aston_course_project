@@ -7,27 +7,27 @@ import com.example.data.database.episodes.EpisodesDb
 import com.example.data.database.episodes.HistoryRealizationEpisodes
 import com.example.data.database.locations.HistoryRealizationLocations
 import com.example.data.database.locations.LocationsDb
-import com.example.data.repository.cache.HistoryRepository
+import com.example.data.repository.cache.HistoryRepositoryCharacters
 import com.example.data.repository.cache.HistoryRepositoryEpisodes
 import com.example.data.repository.cache.HistoryRepositoryLocations
 
-
-class HistoryManager(context: Context) : HistoryRepository, HistoryRepositoryLocations, HistoryRepositoryEpisodes {
+class HistoryManager(context: Context) : HistoryRepositoryCharacters, HistoryRepositoryLocations,
+    HistoryRepositoryEpisodes {
     private val daoHistory = HistoryDataBase.getInstance(context).getHistoryDao()
 
     private val daoLocations = HistoryDataBase.getInstance(context).getLocationsDao()
 
     private val daoEpisodes = HistoryDataBase.getInstance(context).getEpisodesDao()
 
-    var repository = HistoryRealization(daoHistory)
+    private var repository = HistoryRealization(daoHistory)
 
-    var repositoryLocations = HistoryRealizationLocations(daoLocations)
+    private var repositoryLocations = HistoryRealizationLocations(daoLocations)
 
-    var repositoryEpisodes = HistoryRealizationEpisodes(daoEpisodes)
+    private var repositoryEpisodes = HistoryRealizationEpisodes(daoEpisodes)
 
     override suspend fun allHistory(): List<CharactersDb> = repository.allHistory()
 
-    override suspend fun insertNote(charactersDb: CharactersDb) : Long {
+    override suspend fun insertNote(charactersDb: CharactersDb): Long {
         return repository.insertNote(charactersDb)
     }
 
@@ -39,7 +39,7 @@ class HistoryManager(context: Context) : HistoryRepository, HistoryRepositoryLoc
         repository.deleteAll()
     }
 
-    override suspend fun getById(charactersId: Long): CharactersDb {
+    override suspend fun getById(charactersId: Long): CharactersDb? {
         return repository.getById(charactersId)
     }
 
@@ -59,7 +59,7 @@ class HistoryManager(context: Context) : HistoryRepository, HistoryRepositoryLoc
         repositoryLocations.deleteAll()
     }
 
-    override suspend fun getByIdLocations(locationsId: Long): LocationsDb {
+    override suspend fun getByIdLocations(locationsId: Long): LocationsDb? {
         return repositoryLocations.getById(locationsId)
     }
 
@@ -79,7 +79,7 @@ class HistoryManager(context: Context) : HistoryRepository, HistoryRepositoryLoc
         repositoryEpisodes.deleteAll()
     }
 
-    override suspend fun getByIdEpisodes(episodesId: Long): EpisodesDb {
+    override suspend fun getByIdEpisodes(episodesId: Long): EpisodesDb? {
         return repositoryEpisodes.getById(episodesId)
     }
 }

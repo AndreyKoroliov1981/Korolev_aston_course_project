@@ -58,8 +58,12 @@ class PersonageViewModel @AssistedInject constructor(
                 val locations = responseLocations.data
                 updateState { copy(location = locations) }
             } else {
-                Log.d("my_tag", "error ${responseLocations.errorText!!}")
-                updateState { copy(location = null) }
+                if (responseLocations.data != null) {
+                    val locations = responseLocations.data!!
+                    updateState { copy(location = locations) }
+                } else {
+                    updateState { copy(location = null) }
+                }
                 sideEffectSharedFlow.emit(IsErrorData(responseLocations.errorText!!))
             }
 
@@ -68,8 +72,12 @@ class PersonageViewModel @AssistedInject constructor(
                 val origins = responseOrigins.data
                 updateState { copy(origin = origins) }
             } else {
-                Log.d("my_tag", "error ${responseOrigins.errorText!!}")
-                updateState { copy(origin = null) }
+                if (responseLocations.data != null) {
+                    val locations = responseLocations.data!!
+                    updateState { copy(origin = locations) }
+                } else {
+                    updateState { copy(origin = null) }
+                }
                 sideEffectSharedFlow.emit(IsErrorData(responseOrigins.errorText!!))
             }
             updateState { copy(dataLoading = false) }
@@ -84,6 +92,10 @@ class PersonageViewModel @AssistedInject constructor(
                 val listEpisodes = responseListEpisode.data ?: emptyList()
                 updateState { copy(episodes = listEpisodes) }
             } else {
+                if (responseListEpisode.data != null) {
+                    val newEpisodes = responseListEpisode.data!!
+                    updateState { copy(episodes = newEpisodes) }
+                }
                 sideEffectSharedFlow.emit(IsErrorData(responseListEpisode.errorText!!))
             }
             updateState { copy(dataLoading = false) }

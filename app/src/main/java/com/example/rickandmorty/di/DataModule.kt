@@ -2,7 +2,6 @@ package com.example.rickandmorty.di
 
 import android.content.Context
 import com.example.data.database.HistoryManager
-import com.example.data.repository.cache.HistoryRepository
 import com.example.data.network.characters.CharactersCommon
 import com.example.data.network.characters.CharactersRetrofitService
 import com.example.data.network.episodes.EpisodesCommon
@@ -13,6 +12,7 @@ import com.example.data.network.personage.PersonageCommon
 import com.example.data.network.personage.PersonageRetrofitService
 import com.example.data.network.place.PlaceCommon
 import com.example.data.network.place.PlaceRetrofitService
+import com.example.data.repository.cache.HistoryRepositoryCharacters
 import com.example.data.repository.cache.HistoryRepositoryEpisodes
 import com.example.data.repository.cache.HistoryRepositoryLocations
 import com.example.data.repository.characters.CharactersMapper
@@ -40,7 +40,7 @@ class DataModule {
     fun provideCharactersRepository(
         charactersMapper: CharactersMapper,
         charactersRetrofitService: CharactersRetrofitService,
-        historyRepository : HistoryRepository
+        historyRepository : HistoryRepositoryCharacters
     ): CharactersRepository {
         return CharactersRepositoryImpl(
             charactersMapper = charactersMapper,
@@ -63,12 +63,16 @@ class DataModule {
     fun providePersonageRepository(
         episodeMapper: EpisodeMapper,
         locationeMapper: LocationeMapper,
-        personageRetrofitService: PersonageRetrofitService
+        personageRetrofitService: PersonageRetrofitService,
+        historyRepositoryEpisodes: HistoryRepositoryEpisodes,
+        historyRepositoryLocations: HistoryRepositoryLocations
     ): PersonageRepository {
         return PersonageRepositoryImpl(
             episodeMapper = episodeMapper,
             locationeMapper = locationeMapper,
-            personageRetrofitService = personageRetrofitService
+            personageRetrofitService = personageRetrofitService,
+            historyRepositoryEpisodes = historyRepositoryEpisodes,
+            historyRepositoryLocations = historyRepositoryLocations
         )
     }
 
@@ -155,7 +159,7 @@ class DataModule {
     }
 
     @Provides
-    fun provideHistoryRepository(context: Context): HistoryRepository {
+    fun provideHistoryRepository(context: Context): HistoryRepositoryCharacters {
         return HistoryManager(context = context)
     }
 

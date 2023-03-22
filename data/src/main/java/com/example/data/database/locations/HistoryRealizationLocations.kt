@@ -18,7 +18,7 @@ class HistoryRealizationLocations(private val historyDao: LocationsDao) {
         historyDao.deleteAllHistory()
     }
 
-    suspend fun getById(recordId: Long): LocationsDb {
+    suspend fun getById(recordId: Long): LocationsDb? {
         return historyDao.getById(recordId)
     }
 }

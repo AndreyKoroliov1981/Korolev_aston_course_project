@@ -1,8 +1,8 @@
 package com.example.data.repository.characters
 
-import com.example.data.repository.cache.HistoryRepository
 import com.example.data.network.characters.CharactersRetrofitService
 import com.example.data.network.characters.model.CharactersResponse
+import com.example.data.repository.cache.HistoryRepositoryCharacters
 import com.example.domain.characters.CharactersRepository
 import com.example.domain.characters.model.Characters
 import com.example.domain.characters.model.Response
@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 class CharactersRepositoryImpl(
     private val charactersMapper: CharactersMapper,
     private var charactersRetrofitService: CharactersRetrofitService,
-    private var historyRepository: HistoryRepository
+    private var historyRepository: HistoryRepositoryCharacters
 ) : CharactersRepository {
     override suspend fun getCharacters(): Response<List<Characters>> =
         withContext(Dispatchers.IO) {
