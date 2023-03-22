@@ -137,7 +137,6 @@ class PersonageFragment : Fragment() {
     }
 
     private fun gotoLocationsScreen(itemUi: LocationsUi?) {
-        Log.d("my_tag", "gotoLocationsScreen itemUi = $itemUi")
         if (itemUi != null) {
             parentFragmentManager.beginTransaction()
                 .replace(

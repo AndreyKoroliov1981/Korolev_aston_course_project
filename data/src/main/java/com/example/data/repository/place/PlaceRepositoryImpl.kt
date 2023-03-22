@@ -1,7 +1,6 @@
 package com.example.data.repository.place
 
 import com.example.data.database.characters.CharactersDb
-import com.example.data.database.episodes.EpisodesDb
 import com.example.data.network.characters.model.PersonResponse
 import com.example.data.network.place.PlaceRetrofitService
 import com.example.data.repository.cache.HistoryRepositoryCharacters

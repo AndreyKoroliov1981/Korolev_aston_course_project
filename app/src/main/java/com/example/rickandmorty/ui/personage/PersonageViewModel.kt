@@ -53,34 +53,38 @@ class PersonageViewModel @AssistedInject constructor(
     private fun getLocations() {
         launch {
             updateState { copy(dataLoading = true) }
-            val responseLocations = personageInteractor.getLocations(personage.location.url)
-            if (responseLocations.errorText == null) {
-                val locations = responseLocations.data
-                updateState { copy(location = locations) }
-            } else {
-                if (responseLocations.data != null) {
-                    val locations = responseLocations.data!!
+            if (personage.location.url != "") {
+                val responseLocations = personageInteractor.getLocations(personage.location.url)
+                if (responseLocations.errorText == null) {
+                    val locations = responseLocations.data
                     updateState { copy(location = locations) }
                 } else {
-                    updateState { copy(location = null) }
+                    if (responseLocations.data != null) {
+                        val locations = responseLocations.data!!
+                        updateState { copy(location = locations) }
+                    } else {
+                        updateState { copy(location = null) }
+                    }
+                    sideEffectSharedFlow.emit(IsErrorData(responseLocations.errorText!!))
                 }
-                sideEffectSharedFlow.emit(IsErrorData(responseLocations.errorText!!))
             }
 
-            val responseOrigins = personageInteractor.getLocations(personage.origin.url)
-            if (responseOrigins.errorText == null) {
-                val origins = responseOrigins.data
-                updateState { copy(origin = origins) }
-            } else {
-                if (responseLocations.data != null) {
-                    val locations = responseLocations.data!!
-                    updateState { copy(origin = locations) }
+            if ((personage.origin.url) != "") {
+                val responseOrigins = personageInteractor.getLocations(personage.origin.url)
+                if (responseOrigins.errorText == null) {
+                    val origins = responseOrigins.data
+                    updateState { copy(origin = origins) }
                 } else {
-                    updateState { copy(origin = null) }
+                    if (responseOrigins.data != null) {
+                        val locations = responseOrigins.data!!
+                        updateState { copy(origin = locations) }
+                    } else {
+                        updateState { copy(origin = null) }
+                    }
+                    sideEffectSharedFlow.emit(IsErrorData(responseOrigins.errorText!!))
                 }
-                sideEffectSharedFlow.emit(IsErrorData(responseOrigins.errorText!!))
+                updateState { copy(dataLoading = false) }
             }
-            updateState { copy(dataLoading = false) }
         }
     }
 
