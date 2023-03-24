@@ -16,17 +16,14 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.domain.characters.model.Characters
-import com.example.domain.episodes.model.Episode
 import com.example.domain.locations.model.Locations
 import com.example.rickandmorty.FragmentsTags
 import com.example.rickandmorty.MainActivity
 import com.example.rickandmorty.R
-import com.example.rickandmorty.ShowBottomNavBar
+import com.example.rickandmorty.ShowBottomNavBarProvider
 import com.example.rickandmorty.app.App.Companion.appComponent
 import com.example.rickandmorty.common.IsErrorData
 import com.example.rickandmorty.databinding.FragmentLocationsBinding
-import com.example.rickandmorty.ui.episodes.recycler.EpisodesAdapter
-import com.example.rickandmorty.ui.episodes.recycler.RVOnClickEpisodesListeners
 import com.example.rickandmorty.ui.locations.recycler.LocationsAdapter
 import com.example.rickandmorty.ui.locations.recycler.RVOnClickLocationsListeners
 import com.example.rickandmorty.ui.place.PlaceFragment
@@ -37,7 +34,7 @@ import kotlinx.coroutines.launch
 
 class LocationsFragment : Fragment() {
     private lateinit var binding: FragmentLocationsBinding
-    private var showBottomNavBar : ShowBottomNavBar? = null
+    private var showBottomNavBarProvider : ShowBottomNavBarProvider? = null
 
     @javax.inject.Inject
     lateinit var vmFactory: LocationsViewModelFactory
@@ -70,7 +67,7 @@ class LocationsFragment : Fragment() {
             callback
         )
         try {
-            showBottomNavBar = context as ShowBottomNavBar
+            showBottomNavBarProvider = context as ShowBottomNavBarProvider
         } catch (castException: ClassCastException) {
             // The activity does not implement the ShowBottomNavBar.
         }
@@ -87,7 +84,7 @@ class LocationsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        showBottomNavBar?.show(true)
+        showBottomNavBarProvider?.show(true)
         viewModel = ViewModelProvider(this, vmFactory).get(LocationsViewModel::class.java)
         binding.rvLocations.adapter = locationsRVAdapter
         setRVScrollListeners()

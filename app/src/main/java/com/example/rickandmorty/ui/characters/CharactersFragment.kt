@@ -2,7 +2,6 @@ package com.example.rickandmorty.ui.characters
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
 import androidx.appcompat.widget.SearchView
@@ -17,9 +16,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.example.domain.characters.model.Characters
 import com.example.rickandmorty.FragmentsTags
-import com.example.rickandmorty.MainActivity
 import com.example.rickandmorty.R
-import com.example.rickandmorty.ShowBottomNavBar
+import com.example.rickandmorty.ShowBottomNavBarProvider
 import com.example.rickandmorty.app.App.Companion.appComponent
 import com.example.rickandmorty.common.IsEmptyFilter
 import com.example.rickandmorty.common.IsErrorData
@@ -35,7 +33,7 @@ import kotlinx.coroutines.launch
 
 class CharactersFragment : Fragment() {
     private lateinit var binding: FragmentCharactersBinding
-    private var showBottomNavBar : ShowBottomNavBar? = null
+    private var showBottomNavBarProvider : ShowBottomNavBarProvider? = null
 
     @javax.inject.Inject
     lateinit var vmFactory: CharactersViewModelFactory
@@ -61,7 +59,7 @@ class CharactersFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
-            showBottomNavBar = context as ShowBottomNavBar
+            showBottomNavBarProvider = context as ShowBottomNavBarProvider
         } catch (castException: ClassCastException) {
             // The activity does not implement the ShowBottomNavBar.
         }
@@ -84,7 +82,7 @@ class CharactersFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this, vmFactory).get(CharactersViewModel::class.java)
-        showBottomNavBar?.show(true)
+        showBottomNavBarProvider?.show(true)
         binding.rvCharacters.adapter = charactersRVAdapter
         setRVScrollListeners()
         setChipFiltersListeners()

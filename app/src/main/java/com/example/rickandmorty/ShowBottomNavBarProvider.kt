@@ -1,5 +1,5 @@
 package com.example.rickandmorty
 
-interface ShowBottomNavBar {
+interface ShowBottomNavBarProvider {
     fun show(show: Boolean)
 }
