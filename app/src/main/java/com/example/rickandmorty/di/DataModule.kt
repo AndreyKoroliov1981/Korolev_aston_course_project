@@ -36,39 +36,10 @@ import dagger.Provides
 
 @Module
 class DataModule {
-    @Provides
-    fun provideCharactersRepository(
-        charactersMapper: CharactersMapper,
-        charactersRetrofitService: CharactersRetrofitService,
-        historyRepository : HistoryRepositoryCharacters
-    ): CharactersRepository {
-        return CharactersRepositoryImpl(
-            charactersMapper = charactersMapper,
-            charactersRetrofitService = charactersRetrofitService,
-            historyRepository = historyRepository
-        )
-    }
 
     @Provides
     fun provideCharactersRetrofitService(): CharactersRetrofitService {
         return CharactersCommon.charactersRetrofitService
-    }
-
-    @Provides
-    fun providePersonageRepository(
-        episodeMapper: EpisodeMapper,
-        locationeMapper: LocationeMapper,
-        personageRetrofitService: PersonageRetrofitService,
-        historyRepositoryEpisodes: HistoryRepositoryEpisodes,
-        historyRepositoryLocations: HistoryRepositoryLocations
-    ): PersonageRepository {
-        return PersonageRepositoryImpl(
-            episodeMapper = episodeMapper,
-            locationeMapper = locationeMapper,
-            personageRetrofitService = personageRetrofitService,
-            historyRepositoryEpisodes = historyRepositoryEpisodes,
-            historyRepositoryLocations = historyRepositoryLocations
-        )
     }
 
     @Provides
@@ -77,52 +48,13 @@ class DataModule {
     }
 
     @Provides
-    fun provideEpisodesRepository(
-        episodesMapper: EpisodesMapper,
-        episodesRetrofitService: EpisodesRetrofitService,
-        historyRepository: HistoryRepositoryEpisodes
-    ): EpisodesRepository {
-        return EpisodesRepositoryImpl(
-            episodesMapper = episodesMapper,
-            episodesRetrofitService = episodesRetrofitService,
-            historyRepository = historyRepository
-        )
-    }
-
-    @Provides
     fun provideEpisodesRetrofitService(): EpisodesRetrofitService {
         return EpisodesCommon.episodesRetrofitService
     }
 
     @Provides
-    fun provideLocationsRepository(
-        locationsMapper: LocationsMapper,
-        locationsRetrofitService: LocationsRetrofitService,
-        historyRepository: HistoryRepositoryLocations
-    ): LocationsRepository {
-        return LocationsRepositoryImpl(
-            locationsMapper = locationsMapper,
-            locationsRetrofitService = locationsRetrofitService,
-            historyRepository = historyRepository
-        )
-    }
-
-    @Provides
     fun provideLocationsRetrofitService(): LocationsRetrofitService {
         return LocationsCommon.locationsRetrofitService
-    }
-
-    @Provides
-    fun providePlaceRepository(
-        placeMapper: PlaceMapper,
-        placeRetrofitService: PlaceRetrofitService,
-        historyRepositoryCharacters: HistoryRepositoryCharacters
-    ): PlaceRepository {
-        return PlaceRepositoryImpl(
-            placeMapper = placeMapper,
-            placeRetrofitService = placeRetrofitService,
-            historyRepositoryCharacters = historyRepositoryCharacters
-        )
     }
 
     @Provides
