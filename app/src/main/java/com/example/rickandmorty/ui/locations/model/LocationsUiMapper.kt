@@ -1,8 +1,10 @@
 package com.example.rickandmorty.ui.locations.model
 
 import com.example.domain.locations.model.Locations
+import javax.inject.Inject
 
-class LocationsUiMapper {
+class LocationsUiMapper
+@Inject constructor() {
     fun mapLocationsFromDomain(location: Locations): LocationsUi {
         return LocationsUi(
             id = location.id,

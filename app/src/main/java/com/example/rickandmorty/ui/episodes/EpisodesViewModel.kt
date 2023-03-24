@@ -11,7 +11,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 
-class EpisodesViewModel (
+class EpisodesViewModel
+@Inject constructor(
     private val episodesInteractor: EpisodesInteractor,
     private val episodesUiMapper: EpisodesUiMapper,
 ) : BaseViewModel<EpisodesState>(EpisodesState()) {

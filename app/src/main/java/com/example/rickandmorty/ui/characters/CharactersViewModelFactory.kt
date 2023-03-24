@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.domain.characters.CharactersInteractor
 import com.example.rickandmorty.ui.personage.model.CharactersUiMapper
+import javax.inject.Inject
 
-class CharactersViewModelFactory(
-    val charactersInteractor: CharactersInteractor,
-    val charactersUiMapper: CharactersUiMapper,
+class CharactersViewModelFactory
+@Inject constructor(
+    private val charactersInteractor: CharactersInteractor,
+    private val charactersUiMapper: CharactersUiMapper,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return CharactersViewModel(

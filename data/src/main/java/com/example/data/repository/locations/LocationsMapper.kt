@@ -4,8 +4,11 @@ import com.example.data.database.characters.CharactersDb
 import com.example.data.database.locations.LocationsDb
 import com.example.data.network.locations.model.LocationsResponse
 import com.example.domain.locations.model.Locations
+import java.lang.annotation.Inherited
+import javax.inject.Inject
 
-class LocationsMapper {
+class LocationsMapper
+@Inject constructor() {
     fun mapLocationsFromNetwork(locationsResponse: LocationsResponse): List<Locations> {
         val newList = mutableListOf<Locations>()
         for (i in locationsResponse.results.indices) {

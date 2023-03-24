@@ -1,8 +1,10 @@
 package com.example.rickandmorty.ui.episodes.model
 
 import com.example.domain.episodes.model.Episode
+import javax.inject.Inject
 
-class EpisodesUiMapper {
+class EpisodesUiMapper
+@Inject constructor() {
     fun mapEpisodesFromDomain(episode: Episode): EpisodesUi {
         return EpisodesUi(
             id = episode.id,

@@ -50,11 +50,6 @@ class DataModule {
     }
 
     @Provides
-    fun provideCharactersMapper(): CharactersMapper {
-        return CharactersMapper()
-    }
-
-    @Provides
     fun provideCharactersRetrofitService(): CharactersRetrofitService {
         return CharactersCommon.charactersRetrofitService
     }
@@ -77,16 +72,6 @@ class DataModule {
     }
 
     @Provides
-    fun provideLocationeMapper(): LocationeMapper {
-        return LocationeMapper()
-    }
-
-    @Provides
-    fun provideEpisodeMapper(): EpisodeMapper {
-        return EpisodeMapper()
-    }
-
-    @Provides
     fun providePersonageRetrofitService(): PersonageRetrofitService {
         return PersonageCommon.personageRetrofitService
     }
@@ -102,11 +87,6 @@ class DataModule {
             episodesRetrofitService = episodesRetrofitService,
             historyRepository = historyRepository
         )
-    }
-
-    @Provides
-    fun provideEpisodesMapper(): EpisodesMapper {
-        return EpisodesMapper()
     }
 
     @Provides
@@ -128,11 +108,6 @@ class DataModule {
     }
 
     @Provides
-    fun provideLocationsMapper(): LocationsMapper {
-        return LocationsMapper()
-    }
-
-    @Provides
     fun provideLocationsRetrofitService(): LocationsRetrofitService {
         return LocationsCommon.locationsRetrofitService
     }
@@ -148,11 +123,6 @@ class DataModule {
             placeRetrofitService = placeRetrofitService,
             historyRepositoryCharacters = historyRepositoryCharacters
         )
-    }
-
-    @Provides
-    fun providePlaceMapper(): PlaceMapper {
-        return PlaceMapper()
     }
 
     @Provides

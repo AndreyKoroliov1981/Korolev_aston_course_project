@@ -6,8 +6,10 @@ import com.example.data.network.characters.model.CharactersResponse
 import com.example.data.network.characters.model.LocationResponse
 import com.example.domain.characters.model.Characters
 import com.example.domain.characters.model.Location
+import javax.inject.Inject
 
-class CharactersMapper {
+class CharactersMapper
+@Inject constructor(){
     fun mapCharactersFromNetwork(charactersResponse: CharactersResponse): List<Characters> {
         val newList = mutableListOf<Characters>()
         for (i in charactersResponse.results.indices) {

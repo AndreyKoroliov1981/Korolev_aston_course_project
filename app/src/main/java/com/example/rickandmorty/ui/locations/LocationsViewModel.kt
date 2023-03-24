@@ -9,8 +9,10 @@ import com.example.rickandmorty.ui.locations.model.LocationsUi
 import com.example.rickandmorty.ui.locations.model.LocationsUiMapper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
-class LocationsViewModel (
+class LocationsViewModel
+@Inject constructor(
     private val locationsInteractor: LocationsInteractor,
     private val locationsUiMapper: LocationsUiMapper,
 ) : BaseViewModel<LocationsState>(LocationsState()) {

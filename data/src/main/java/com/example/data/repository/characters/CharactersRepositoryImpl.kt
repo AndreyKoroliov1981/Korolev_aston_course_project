@@ -8,8 +8,10 @@ import com.example.domain.characters.model.Characters
 import com.example.domain.characters.model.Response
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class CharactersRepositoryImpl(
+class CharactersRepositoryImpl
+@Inject constructor(
     private val charactersMapper: CharactersMapper,
     private var charactersRetrofitService: CharactersRetrofitService,
     private var historyRepository: HistoryRepositoryCharacters
@@ -19,31 +21,35 @@ class CharactersRepositoryImpl(
             currentPage++
             try {
                 val response = charactersRetrofitService.getAllCharacters(currentPage).execute()
-                val responseBody : CharactersResponse?
-                val responseError : String?
+                val responseBody: CharactersResponse?
+                val responseError: String?
                 if (response.isSuccessful) {
                     responseBody = response.body()
-                    val historyData =  charactersMapper.mapCharactersToDb(responseBody!!)
+                    val historyData = charactersMapper.mapCharactersToDb(responseBody!!)
                     for (i in historyData.indices) {
                         historyRepository.insertNote(historyData[i])
                     }
                     return@withContext Response(
                         data = charactersMapper.mapCharactersFromNetwork(responseBody),
-                        errorText = null)
+                        errorText = null
+                    )
                 } else {
                     currentPage--
                     responseError = TEXT_NO_MORE_DATA
                     return@withContext Response(
                         data = null,
-                        errorText = responseError)
+                        errorText = responseError
+                    )
                 }
 
             } catch (e: java.lang.Exception) {
                 currentPage--
-                val historyData = charactersMapper.mapCharactersFromDb(historyRepository.allHistory())
+                val historyData =
+                    charactersMapper.mapCharactersFromDb(historyRepository.allHistory())
                 return@withContext Response(
                     data = historyData,
-                    errorText = e.toString())
+                    errorText = e.toString()
+                )
             }
         }
 

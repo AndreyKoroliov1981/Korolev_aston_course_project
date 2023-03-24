@@ -13,8 +13,10 @@ import com.example.domain.locations.model.Locations
 import com.example.domain.personage.PersonageRepository
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
-class PersonageRepositoryImpl(
+class PersonageRepositoryImpl
+@Inject constructor(
     private val episodeMapper: EpisodeMapper,
     private val locationeMapper: LocationeMapper,
     private var personageRetrofitService: PersonageRetrofitService,

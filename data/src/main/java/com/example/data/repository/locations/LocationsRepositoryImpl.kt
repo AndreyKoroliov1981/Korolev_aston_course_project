@@ -8,9 +8,11 @@ import com.example.domain.locations.LocationsRepository
 import com.example.domain.locations.model.Locations
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 
-class LocationsRepositoryImpl(
+class LocationsRepositoryImpl
+@Inject constructor(
     private val locationsMapper: LocationsMapper,
     private var locationsRetrofitService: LocationsRetrofitService,
     private var historyRepository: HistoryRepositoryLocations
@@ -20,31 +22,35 @@ class LocationsRepositoryImpl(
             currentPage++
             try {
                 val response = locationsRetrofitService.getAllLocations(currentPage).execute()
-                val responseBody : LocationsResponse?
-                val responseError : String?
+                val responseBody: LocationsResponse?
+                val responseError: String?
                 if (response.isSuccessful) {
                     responseBody = response.body()
-                    val historyData =  locationsMapper.mapLocationsToDb(responseBody!!)
+                    val historyData = locationsMapper.mapLocationsToDb(responseBody!!)
                     for (i in historyData.indices) {
                         historyRepository.insertNoteLocations(historyData[i])
                     }
                     return@withContext Response(
                         data = locationsMapper.mapLocationsFromNetwork(responseBody!!),
-                        errorText = null)
+                        errorText = null
+                    )
                 } else {
                     currentPage--
                     responseError = TEXT_NO_MORE_DATA
                     return@withContext Response(
                         data = null,
-                        errorText = responseError)
+                        errorText = responseError
+                    )
                 }
 
             } catch (e: java.lang.Exception) {
                 currentPage--
-                val historyData = locationsMapper.mapLocationsFromDb(historyRepository.allHistoryLocations())
+                val historyData =
+                    locationsMapper.mapLocationsFromDb(historyRepository.allHistoryLocations())
                 return@withContext Response(
                     data = historyData,
-                    errorText = e.toString())
+                    errorText = e.toString()
+                )
             }
         }
 

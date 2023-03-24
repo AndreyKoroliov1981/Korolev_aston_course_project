@@ -1,6 +1,5 @@
 package com.example.rickandmorty.ui.characters
 
-import android.util.Log
 import com.example.domain.characters.CharactersInteractor
 import com.example.domain.characters.model.Characters
 import com.example.rickandmorty.common.BaseViewModel
@@ -17,7 +16,8 @@ const val STATUS_DEAD = "Dead"
 const val STATUS_UNKNOWN = "unknown"
 const val DEBOUNCE_MILS = 300L
 
-class CharactersViewModel (
+class CharactersViewModel
+@Inject constructor(
     private val charactersInteractor: CharactersInteractor,
     private val charactersUiMapper: CharactersUiMapper,
 ) : BaseViewModel<CharactersState>(CharactersState()) {

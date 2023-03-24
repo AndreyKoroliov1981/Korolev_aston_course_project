@@ -9,15 +9,18 @@ import com.example.domain.characters.model.Response
 import com.example.domain.place.PlaceRepository
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
-class PlaceRepositoryImpl(
+class PlaceRepositoryImpl
+@Inject constructor(
     private val placeMapper: PlaceMapper,
     private var placeRetrofitService: PlaceRetrofitService,
     private var historyRepositoryCharacters: HistoryRepositoryCharacters
 ) : PlaceRepository {
     override suspend fun getResidents(queryString: String): Response<List<Characters>> {
         val answer = try {
-            val data  = placeMapper.mapPlaceFromNetwork(requestRXJavaRetrofit(queryString).blockingGet())
+            val data =
+                placeMapper.mapPlaceFromNetwork(requestRXJavaRetrofit(queryString).blockingGet())
             val historyData = placeMapper.mapCharactersToDb(data)
             for (i in historyData.indices) {
                 historyRepositoryCharacters.insertNote(historyData[i])

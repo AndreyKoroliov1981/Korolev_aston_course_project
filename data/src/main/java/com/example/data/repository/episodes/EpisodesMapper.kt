@@ -3,8 +3,10 @@ package com.example.data.repository.episodes
 import com.example.data.database.episodes.EpisodesDb
 import com.example.data.network.episodes.model.EpisodesResponse
 import com.example.domain.episodes.model.Episode
+import javax.inject.Inject
 
-class EpisodesMapper {
+class EpisodesMapper
+@Inject constructor(){
     fun mapEpisodesFromNetwork(episodesResponse: EpisodesResponse): List<Episode> {
         val newList = mutableListOf<Episode>()
         for (i in episodesResponse.results.indices) {

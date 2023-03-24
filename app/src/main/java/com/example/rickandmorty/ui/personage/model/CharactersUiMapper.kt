@@ -2,8 +2,10 @@ package com.example.rickandmorty.ui.personage.model
 
 import com.example.domain.characters.model.Characters
 import com.example.domain.characters.model.Location
+import javax.inject.Inject
 
-class CharactersUiMapper {
+class CharactersUiMapper
+@Inject constructor(){
     fun mapCharactersFromDomain(characters: Characters): CharactersUi {
         return CharactersUi(
             id = characters.id,
