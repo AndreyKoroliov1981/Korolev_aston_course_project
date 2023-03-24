@@ -92,7 +92,9 @@ class EpisodesFragment: Fragment() {
         setPullToRefresh()
 
         binding.apply {
-            lifecycleScope.launch {
+//            lifecycleScope.launch {  // old version
+//          Restartable Lifecycle-aware coroutines https://developer.android.com/topic/libraries/architecture/coroutines
+            viewLifecycleOwner.lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     launch {
                         viewModel.stateFlow.collect {
@@ -110,9 +112,9 @@ class EpisodesFragment: Fragment() {
                     }
 
                     launch {
-                        viewModel.sideEffect.collectLatest {
-                            if (it is IsErrorData) {
-                                writeError(view, it.errorMessage)
+                        viewModel.sideEffect.collectLatest { sideEffect ->
+                            if (sideEffect is IsErrorData) {
+                                writeError(view, sideEffect.errorMessage)
                             }
                         }
                     }

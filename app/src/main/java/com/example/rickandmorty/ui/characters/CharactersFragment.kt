@@ -32,8 +32,9 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class CharactersFragment : Fragment() {
+
     private lateinit var binding: FragmentCharactersBinding
-    private var showBottomNavBarProvider : ShowBottomNavBarProvider? = null
+    private var showBottomNavBarProvider: ShowBottomNavBarProvider? = null
 
     @javax.inject.Inject
     lateinit var vmFactory: CharactersViewModelFactory
@@ -90,7 +91,9 @@ class CharactersFragment : Fragment() {
         setPullToRefresh()
 
         binding.apply {
-            lifecycleScope.launch {
+//            lifecycleScope.launch {  // old version
+//          Restartable Lifecycle-aware coroutines https://developer.android.com/topic/libraries/architecture/coroutines
+            viewLifecycleOwner.lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     launch {
                         viewModel.stateFlow.collect {
@@ -122,10 +125,10 @@ class CharactersFragment : Fragment() {
                     }
 
                     launch {
-                        viewModel.sideEffect.collectLatest {
-                            when (it) {
+                        viewModel.sideEffect.collectLatest { sideEffect ->
+                            when (sideEffect) {
                                 is IsErrorData -> {
-                                    writeError(view, it.errorMessage)
+                                    writeError(view, sideEffect.errorMessage)
                                 }
                                 is IsEmptyFilter -> {
                                     writeError(

@@ -31,7 +31,8 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class SeriesFragment: Fragment() {
+class SeriesFragment : Fragment() {
+
     private lateinit var binding: FragmentSeriesBinding
     private var series: EpisodesUi? = null
     private var showBottomNavBarProvider: ShowBottomNavBarProvider? = null
@@ -97,8 +98,11 @@ class SeriesFragment: Fragment() {
         setPullToRefresh()
 
         binding.apply {
-            lifecycleScope.launch {
+//            lifecycleScope.launch {  // old version
+//          Restartable Lifecycle-aware coroutines https://developer.android.com/topic/libraries/architecture/coroutines
+            viewLifecycleOwner.lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+
                     launch {
                         viewModel.stateFlow.collect {
                             binding.pbLoadData.isVisible = it.dataLoading
@@ -112,9 +116,9 @@ class SeriesFragment: Fragment() {
                     }
 
                     launch {
-                        viewModel.sideEffect.collectLatest {
-                            if (it is IsErrorData) {
-                                writeError(view, it.errorMessage)
+                        viewModel.sideEffect.collectLatest { sideEffect ->
+                            if (sideEffect is IsErrorData) {
+                                writeError(view, sideEffect.errorMessage)
                             }
                         }
                     }

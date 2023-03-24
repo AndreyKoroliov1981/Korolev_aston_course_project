@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class PersonageFragment : Fragment() {
+
     private lateinit var binding: FragmentPersonageBinding
     private var personage: CharactersUi? = null
     private var showBottomNavBarProvider: ShowBottomNavBarProvider? = null
@@ -83,8 +84,10 @@ class PersonageFragment : Fragment() {
         setPullToRefresh()
 
         binding.apply {
-            lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+//            lifecycleScope.launch {  // old version
+//          Restartable Lifecycle-aware coroutines https://developer.android.com/topic/libraries/architecture/coroutines
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     launch {
                         viewModel.stateFlow.collect {
                             binding.pbLoadData.isVisible = it.dataLoading
@@ -113,9 +116,9 @@ class PersonageFragment : Fragment() {
                     }
 
                     launch {
-                        viewModel.sideEffect.collectLatest {
-                            if (it is IsErrorData) {
-                                writeError(view, it.errorMessage)
+                        viewModel.sideEffect.collectLatest { sideEffect ->
+                            if (sideEffect is IsErrorData) {
+                                writeError(view, sideEffect.errorMessage)
                             }
                         }
                     }

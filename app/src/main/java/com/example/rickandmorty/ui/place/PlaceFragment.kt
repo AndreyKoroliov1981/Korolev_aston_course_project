@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class PlaceFragment : Fragment() {
+
     private lateinit var binding: FragmentPlaceBinding
     private var place: LocationsUi? = null
     private var showBottomNavBarProvider: ShowBottomNavBarProvider? = null
@@ -97,8 +98,10 @@ class PlaceFragment : Fragment() {
         setPullToRefresh()
 
         binding.apply {
-            lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+//            lifecycleScope.launch {  // old version
+//          Restartable Lifecycle-aware coroutines https://developer.android.com/topic/libraries/architecture/coroutines
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     launch {
                         viewModel.stateFlow.collect {
                             binding.pbLoadData.isVisible = it.dataLoading
@@ -112,9 +115,9 @@ class PlaceFragment : Fragment() {
                     }
 
                     launch {
-                        viewModel.sideEffect.collectLatest {
-                            if (it is IsErrorData) {
-                                writeError(view, it.errorMessage)
+                        viewModel.sideEffect.collectLatest {sideEffect ->
+                            if (sideEffect is IsErrorData) {
+                                writeError(view, sideEffect.errorMessage)
                             }
                         }
                     }
