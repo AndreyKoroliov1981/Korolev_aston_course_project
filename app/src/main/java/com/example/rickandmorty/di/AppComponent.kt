@@ -10,7 +10,8 @@ import com.example.rickandmorty.ui.series.SeriesFragment
 import dagger.BindsInstance
 import dagger.Component
 
-@Component(modules = [DomainModule::class, DataModule::class])
+//@Component(modules = [DomainModule::class, DataModule::class, BindDomainModule::class])
+@Component(modules = [DataModule::class, BindDomainModule::class])
 interface AppComponent {
     fun injectCharactersFragment(charactersFragment: CharactersFragment)
     fun injectPersonageFragment(personageFragment: PersonageFragment)
@@ -23,7 +24,7 @@ interface AppComponent {
     @Component.Factory
     interface Factory {
         fun create(
-        @BindsInstance context: Context
+            @BindsInstance context: Context
         ): AppComponent
     }
 }

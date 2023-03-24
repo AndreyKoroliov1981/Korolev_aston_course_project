@@ -3,10 +3,12 @@ package com.example.domain.personage
 import com.example.domain.characters.model.Response
 import com.example.domain.episodes.model.Episode
 import com.example.domain.locations.model.Locations
+import javax.inject.Inject
 
-class PersonageInteractorImpl(
+class PersonageInteractorImpl
+@Inject constructor(
     private val personageRepository: PersonageRepository
-    ): PersonageInteractor {
+) : PersonageInteractor {
     override suspend fun getEpisodes(episodes: List<String>): Response<List<Episode>> {
         var queryString = episodes[0].substringAfterLast('/')
         for (i in 1 until episodes.size) {

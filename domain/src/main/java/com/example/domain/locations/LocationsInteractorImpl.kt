@@ -2,8 +2,12 @@ package com.example.domain.locations
 
 import com.example.domain.characters.model.Response
 import com.example.domain.locations.model.Locations
+import javax.inject.Inject
 
-class LocationsInteractorImpl(private val locationsRepository: LocationsRepository) :
+class LocationsInteractorImpl
+@Inject constructor(
+    private val locationsRepository: LocationsRepository
+) :
     LocationsInteractor {
     private var currentSearchName = ""
     private var currentSearchType = ""

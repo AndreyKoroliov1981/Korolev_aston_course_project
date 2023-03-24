@@ -4,8 +4,10 @@ import com.example.domain.characters.model.Characters
 import com.example.domain.characters.model.Response
 import com.example.domain.episodes.model.Episode
 import com.example.domain.place.PlaceRepository
+import javax.inject.Inject
 
-class SeriesInteractorImpl(
+class SeriesInteractorImpl
+@Inject constructor(
     private val placeRepository: PlaceRepository
 ) : SeriesInteractor {
     override suspend fun getResidents(residents: List<String>): Response<List<Characters>> {
