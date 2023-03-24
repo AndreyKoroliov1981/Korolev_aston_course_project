@@ -15,7 +15,7 @@ import com.example.rickandmorty.ui.characters.CharactersFragment
 import com.example.rickandmorty.ui.episodes.EpisodesFragment
 import com.example.rickandmorty.ui.locations.LocationsFragment
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ShowBottomNavBar {
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,10 +42,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun showBottomNavBar(show: Boolean) {
-        binding.bottomNavBar.isVisible = show
-    }
-
     private fun replaceFragment(fragment: Fragment, tag: String) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container_view, fragment, tag)
@@ -54,5 +50,9 @@ class MainActivity : AppCompatActivity() {
 
     fun changeBottomSelectedIDForMain() {
         binding.bottomNavBar.selectedItemId = R.id.action_characters
+    }
+
+    override fun show(show: Boolean) {
+        binding.bottomNavBar.isVisible = show
     }
 }

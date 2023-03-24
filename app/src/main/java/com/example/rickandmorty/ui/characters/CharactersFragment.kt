@@ -1,7 +1,7 @@
 package com.example.rickandmorty.ui.characters
 
+import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
 import androidx.appcompat.widget.SearchView
@@ -18,6 +18,7 @@ import com.example.domain.characters.model.Characters
 import com.example.rickandmorty.FragmentsTags
 import com.example.rickandmorty.MainActivity
 import com.example.rickandmorty.R
+import com.example.rickandmorty.ShowBottomNavBar
 import com.example.rickandmorty.app.App.Companion.appComponent
 import com.example.rickandmorty.common.IsEmptyFilter
 import com.example.rickandmorty.common.IsErrorData
@@ -25,7 +26,6 @@ import com.example.rickandmorty.databinding.FragmentCharactersBinding
 import com.example.rickandmorty.ui.characters.recycler.CharactersAdapter
 import com.example.rickandmorty.ui.characters.recycler.RVOnClickCharactersListeners
 import com.example.rickandmorty.ui.personage.PersonageFragment
-import com.example.rickandmorty.ui.personage.model.CharactersUIMapper
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -34,6 +34,7 @@ import kotlinx.coroutines.launch
 
 class CharactersFragment : Fragment() {
     private lateinit var binding: FragmentCharactersBinding
+    private var showBottomNavBar : ShowBottomNavBar? = null
 
     @javax.inject.Inject
     lateinit var vmFactory: CharactersViewModelFactory
@@ -43,19 +44,34 @@ class CharactersFragment : Fragment() {
         object : RVOnClickCharactersListeners {
             override fun onClicked(item: Characters) {
                 val itemUI = viewModel.mapCharactersToCharactersUI(item)
+
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container_view, PersonageFragment.newInstance(itemUI), FragmentsTags.Personage.tag)
+                    .replace(
+                        R.id.fragment_container_view,
+                        PersonageFragment.newInstance(itemUI),
+                        FragmentsTags.Personage.tag
+                    )
                     .addToBackStack(null)
                     .commit()
             }
         }
     )
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            showBottomNavBar = context as ShowBottomNavBar
+        } catch (castException: ClassCastException) {
+            // The activity does not implement the ShowBottomNavBar.
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentCharactersBinding.inflate(inflater, container, false)
+        appComponent.injectCharactersFragment(this)
         return binding.root
     }
 
@@ -66,13 +82,13 @@ class CharactersFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        appComponent.injectCharactersFragment(this)
         viewModel = ViewModelProvider(this, vmFactory).get(CharactersViewModel::class.java)
-        (activity as? MainActivity)?.showBottomNavBar(true)
+        showBottomNavBar?.show(true)
         binding.rvCharacters.adapter = charactersRVAdapter
         setRVScrollListeners()
         setChipFiltersListeners()
         setSearchViewQueryTextListeners()
+        setPullToRefresh()
 
         binding.apply {
             lifecycleScope.launch {
@@ -108,12 +124,16 @@ class CharactersFragment : Fragment() {
 
                     launch {
                         viewModel.sideEffect.collectLatest {
-                            if (it is IsErrorData) {
-                                writeError(view, it.errorMessage)
-                            }
-
-                            if (it is IsEmptyFilter) {
-                                writeError(view, resources.getString(R.string.text_error_empty_filter))
+                            when (it) {
+                                is IsErrorData -> {
+                                    writeError(view, it.errorMessage)
+                                }
+                                is IsEmptyFilter -> {
+                                    writeError(
+                                        view,
+                                        resources.getString(R.string.text_error_empty_filter)
+                                    )
+                                }
                             }
                         }
                     }
@@ -125,17 +145,23 @@ class CharactersFragment : Fragment() {
     private fun setSearchViewQueryTextListeners() {
         binding.svCharacters.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                Log.d("my_tag","start onQueryTextSubmit")
                 if (query != null) viewModel.changeSearchViewQuery(query)
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                Log.d("my_tag","start onQueryTextChange")
                 if (newText != null) viewModel.changeSearchViewQuery(newText)
                 return false
             }
         })
+    }
+
+    private fun setPullToRefresh() {
+        binding.srRefresh.setOnRefreshListener {
+            binding.srRefresh.isRefreshing = true
+            viewModel.refreshLoad()
+            binding.srRefresh.isRefreshing = false
+        }
     }
 
     private fun setRVScrollListeners() {

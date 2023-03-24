@@ -5,63 +5,83 @@ import com.example.domain.characters.model.Characters
 import com.example.rickandmorty.common.BaseViewModel
 import com.example.rickandmorty.common.IsEmptyFilter
 import com.example.rickandmorty.common.IsErrorData
-import com.example.rickandmorty.ui.personage.model.CharactersUI
-import com.example.rickandmorty.ui.personage.model.CharactersUIMapper
+import com.example.rickandmorty.ui.personage.model.CharactersUi
+import com.example.rickandmorty.ui.personage.model.CharactersUiMapper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
-class CharactersViewModel(
+const val STATUS_ALIVE = "Alive"
+const val STATUS_DEAD = "Dead"
+const val STATUS_UNKNOWN = "unknown"
+const val DEBOUNCE_MILS = 300L
+
+class CharactersViewModel (
     private val charactersInteractor: CharactersInteractor,
-    private val charactersUIMapper: CharactersUIMapper,
+    private val charactersUiMapper: CharactersUiMapper,
 ) : BaseViewModel<CharactersState>(CharactersState()) {
 
     private var job: Job? = null
 
     init {
+        refreshLoad()
+    }
+
+    fun refreshLoad() {
+        updateState { copy(characters = emptyList()) }
         charactersInteractor.setStartPage()
         getCharacters()
     }
 
-    fun mapCharactersToCharactersUI(item: Characters): CharactersUI {
-        return charactersUIMapper.mapCharactersFromDomain(item)
+    fun mapCharactersToCharactersUI(item: Characters): CharactersUi {
+        return charactersUiMapper.mapCharactersFromDomain(item)
     }
 
     fun getCharacters() {
         job?.cancel()
         job = launch {
-            delay(300)
-            val newFilters = mutableListOf<String>()
-            if (state.chipFilterAliveInstalled) newFilters.add("Alive")
-            if (state.chipFilterDeadInstalled) newFilters.add("Dead")
-            if (state.chipFilterUnknownInstalled) newFilters.add("unknown")
-            if (newFilters.isNotEmpty()) {
-                updateState { copy(dataLoading = true) }
-                    var isCheckedEndLoadFromApi = true
-                    while (isCheckedEndLoadFromApi) {
-                        val responseListCharacters =
-                            charactersInteractor.getCharacters(
-                                searchName = state.searchName,
-                                filters = newFilters
-                            )
-                        if (responseListCharacters.errorText == null) {
-                            val listCharacters = responseListCharacters.data ?: emptyList()
-                            isCheckedEndLoadFromApi = listCharacters.isEmpty()
-                            val newCharacters = state.characters + listCharacters
-                            updateState { copy(characters = newCharacters) }
-                        } else {
-                            isCheckedEndLoadFromApi = false
-                            sideEffectSharedFlow.emit(IsErrorData(responseListCharacters.errorText!!))
-                        }
-                    }
-                updateState { copy(dataLoading = false) }
-            } else {
+            delay(DEBOUNCE_MILS)
+            val newFilters = filters()
+            if (newFilters.isEmpty()) {
                 sideEffectSharedFlow.emit(IsEmptyFilter())
+                return@launch
+            }
+            updateState { copy(dataLoading = true) }
+            loadData(newFilters)
+            updateState { copy(dataLoading = false) }
+        }
+    }
+
+    private suspend fun loadData(filters: List<String>) {
+        var isCheckedEndLoadFromApi = true
+        while (isCheckedEndLoadFromApi) {
+            val responseListCharacters =
+                charactersInteractor.getCharacters(
+                    searchName = state.searchName,
+                    filters = filters
+                )
+            if (responseListCharacters.errorText == null) {
+                val listCharacters = responseListCharacters.data ?: emptyList()
+                val newCharacters = state.characters + listCharacters
+                updateState { copy(characters = newCharacters) }
+                isCheckedEndLoadFromApi = listCharacters.isEmpty()
+            } else {
+                isCheckedEndLoadFromApi = false
+                sideEffectSharedFlow.emit(IsErrorData(responseListCharacters.errorText!!))
             }
         }
     }
 
+    private fun filters(): List<String> {
+        val newFilters = mutableListOf<String>()
+        if (state.chipFilterAliveInstalled) newFilters.add(STATUS_ALIVE)
+        if (state.chipFilterDeadInstalled) newFilters.add(STATUS_DEAD)
+        if (state.chipFilterUnknownInstalled) newFilters.add(STATUS_UNKNOWN)
+        return newFilters
+    }
+
     fun changeSearchViewQuery(query: String) {
-        if (query != state.searchName ) {
+        if (query != state.searchName) {
             updateState { copy(characters = emptyList(), searchName = query) }
             getCharacters()
         }

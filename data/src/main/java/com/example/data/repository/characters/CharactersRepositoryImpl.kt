@@ -1,6 +1,5 @@
 package com.example.data.repository.characters
 
-import android.util.Log
 import com.example.data.network.characters.CharactersRetrofitService
 import com.example.data.network.characters.model.CharactersResponse
 import com.example.domain.characters.CharactersRepository
@@ -8,7 +7,6 @@ import com.example.domain.characters.model.Characters
 import com.example.domain.characters.model.Response
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
 
 class CharactersRepositoryImpl(
     private val charactersMapper: CharactersMapper,
