@@ -1,63 +1,67 @@
 package com.example.rickandmorty.di
 
 import android.content.Context
+import com.example.data.BuildConfig
 import com.example.data.database.HistoryManager
-import com.example.data.network.characters.CharactersCommon
 import com.example.data.network.characters.CharactersRetrofitService
-import com.example.data.network.episodes.EpisodesCommon
 import com.example.data.network.episodes.EpisodesRetrofitService
-import com.example.data.network.locations.LocationsCommon
 import com.example.data.network.locations.LocationsRetrofitService
-import com.example.data.network.personage.PersonageCommon
 import com.example.data.network.personage.PersonageRetrofitService
-import com.example.data.network.place.PlaceCommon
 import com.example.data.network.place.PlaceRetrofitService
 import com.example.data.repository.cache.*
-import com.example.data.repository.characters.CharactersMapper
-import com.example.data.repository.characters.CharactersRepositoryImpl
-import com.example.data.repository.episodes.EpisodesMapper
-import com.example.data.repository.episodes.EpisodesRepositoryImpl
-import com.example.data.repository.locations.LocationsMapper
-import com.example.data.repository.locations.LocationsRepositoryImpl
-import com.example.data.repository.personage.EpisodeMapper
-import com.example.data.repository.personage.LocationeMapper
-import com.example.data.repository.personage.PersonageRepositoryImpl
-import com.example.data.repository.place.PlaceMapper
-import com.example.data.repository.place.PlaceRepositoryImpl
-import com.example.domain.characters.CharactersRepository
-import com.example.domain.episodes.EpisodesRepository
-import com.example.domain.locations.LocationsRepository
-import com.example.domain.personage.PersonageRepository
-import com.example.domain.place.PlaceRepository
 import dagger.Module
 import dagger.Provides
+import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Named
+import javax.inject.Singleton
 
 @Module
 class DataModule {
 
     @Provides
-    fun provideCharactersRetrofitService(): CharactersRetrofitService {
-        return CharactersCommon.charactersRetrofitService
+    fun provideCharactersRetrofitService(@Named("Retrofit") retrofit: Retrofit): CharactersRetrofitService {
+        return retrofit.create(CharactersRetrofitService::class.java)
     }
 
     @Provides
-    fun providePersonageRetrofitService(): PersonageRetrofitService {
-        return PersonageCommon.personageRetrofitService
+    fun provideEpisodesRetrofitService(@Named("Retrofit") retrofit: Retrofit): EpisodesRetrofitService {
+        return retrofit.create(EpisodesRetrofitService::class.java)
     }
 
     @Provides
-    fun provideEpisodesRetrofitService(): EpisodesRetrofitService {
-        return EpisodesCommon.episodesRetrofitService
+    fun provideLocationsRetrofitService(@Named("Retrofit") retrofit: Retrofit): LocationsRetrofitService {
+        return retrofit.create(LocationsRetrofitService::class.java)
     }
 
     @Provides
-    fun provideLocationsRetrofitService(): LocationsRetrofitService {
-        return LocationsCommon.locationsRetrofitService
+    fun providePersonageRetrofitService(@Named("RetrofitRxJava") retrofit: Retrofit): PersonageRetrofitService {
+        return retrofit.create(PersonageRetrofitService::class.java)
     }
 
     @Provides
-    fun providePlaceRetrofitService(): PlaceRetrofitService {
-        return PlaceCommon.placeRetrofitService
+    fun providePlaceRetrofitService(@Named("RetrofitRxJava") retrofit: Retrofit): PlaceRetrofitService {
+        return retrofit.create(PlaceRetrofitService::class.java)
+    }
+
+    @Provides
+    @Named("Retrofit")
+    fun provideRetrofit(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.API_ENDPOINT)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    @Provides
+    @Named("RetrofitRxJava")
+    fun provideRetrofitRxJava(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(BuildConfig.API_ENDPOINT)
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .build()
     }
 
     @Provides
