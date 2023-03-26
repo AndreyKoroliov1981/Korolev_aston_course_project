@@ -1,8 +1,6 @@
 package com.example.rickandmorty.di
 
-import android.content.Context
 import com.example.data.BuildConfig
-import com.example.data.database.HistoryManager
 import com.example.data.network.characters.CharactersRetrofitService
 import com.example.data.network.episodes.EpisodesRetrofitService
 import com.example.data.network.locations.LocationsRetrofitService
@@ -15,10 +13,9 @@ import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Named
-import javax.inject.Singleton
 
 @Module
-class DataModule {
+class RetrofitDataModule {
 
     @Provides
     fun provideCharactersRetrofitService(@Named("Retrofit") retrofit: Retrofit): CharactersRetrofitService {
@@ -64,18 +61,4 @@ class DataModule {
             .build()
     }
 
-    @Provides
-    fun provideHistoryRepository(context: Context): CharactersHistoryRepository {
-        return HistoryManager(context = context)
-    }
-
-    @Provides
-    fun provideHistoryRepositoryLocations(context: Context): LocationsHistoryRepository {
-        return HistoryManager(context = context)
-    }
-
-    @Provides
-    fun provideHistoryRepositoryEpisodes(context: Context): EpisodesHistoryRepository {
-        return HistoryManager(context = context)
-    }
 }

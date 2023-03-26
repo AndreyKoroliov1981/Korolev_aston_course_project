@@ -2,7 +2,7 @@ package com.example.data.repository.cache
 
 import com.example.data.database.characters.CharactersDb
 
-interface CharactersHistoryRepository {
+interface CharactersDataSource {
     suspend fun allHistory(): List<CharactersDb>
     suspend fun insertNote(charactersDb: CharactersDb): Long
     suspend fun deleteNote(charactersDb: CharactersDb)

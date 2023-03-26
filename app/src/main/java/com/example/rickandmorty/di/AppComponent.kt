@@ -10,7 +10,7 @@ import com.example.rickandmorty.ui.series.SeriesFragment
 import dagger.BindsInstance
 import dagger.Component
 
-@Component(modules = [DataModule::class, BindDataModule::class, BindDomainModule::class])
+@Component(modules = [RoomDataModule::class, RetrofitDataModule::class, BindDataModule::class, BindDomainModule::class])
 interface AppComponent {
     fun injectCharactersFragment(charactersFragment: CharactersFragment)
     fun injectPersonageFragment(personageFragment: PersonageFragment)

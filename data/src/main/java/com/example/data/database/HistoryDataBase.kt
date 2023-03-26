@@ -14,21 +14,21 @@ import com.example.data.database.locations.LocationsDb
 
 @Database(entities = [CharactersDb::class, LocationsDb::class, EpisodesDb::class], version = 1)
 abstract class HistoryDataBase : RoomDatabase() {
-    abstract fun getHistoryDao(): CharactersDao
-    abstract fun getLocationsDao(): LocationsDao
-    abstract fun getEpisodesDao(): EpisodesDao
+    abstract fun charactersDao(): CharactersDao
+    abstract fun locationsDao(): LocationsDao
+    abstract fun episodesDao(): EpisodesDao
 
-    companion object {
-        private var database: HistoryDataBase? = null
-
-        @Synchronized
-        fun getInstance(context: Context): HistoryDataBase {
-            return if (database == null) {
-                database = Room.databaseBuilder(context, HistoryDataBase::class.java, "db").build()
-                database as HistoryDataBase
-            } else {
-                database as HistoryDataBase
-            }
-        }
-    }
+//    companion object {
+//        private var database: HistoryDataBase? = null
+//
+//        @Synchronized
+//        fun getInstance(context: Context): HistoryDataBase {
+//            return if (database == null) {
+//                database = Room.databaseBuilder(context, HistoryDataBase::class.java, "db").build()
+//                database as HistoryDataBase
+//            } else {
+//                database as HistoryDataBase
+//            }
+//        }
+//    }
 }

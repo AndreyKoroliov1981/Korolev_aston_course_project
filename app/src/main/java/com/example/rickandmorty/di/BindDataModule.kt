@@ -1,5 +1,11 @@
 package com.example.rickandmorty.di
 
+import com.example.data.database.characters.CharactersDataSourceImpl
+import com.example.data.database.episodes.EpisodesDataSourceImpl
+import com.example.data.database.locations.LocationsDataSourceImpl
+import com.example.data.repository.cache.CharactersDataSource
+import com.example.data.repository.cache.EpisodesDataSource
+import com.example.data.repository.cache.LocationsDataSource
 import com.example.data.repository.characters.CharactersRepositoryImpl
 import com.example.data.repository.episodes.EpisodesRepositoryImpl
 import com.example.data.repository.locations.LocationsRepositoryImpl
@@ -14,20 +20,30 @@ import dagger.Binds
 import dagger.Module
 
 @Module
-interface  BindDataModule {
+interface BindDataModule {
 
     @Binds
-    fun bindCharactersRepositoryImpl(charactersRepositoryImpl: CharactersRepositoryImpl) : CharactersRepository
+    fun bindCharactersRepositoryImpl(charactersRepositoryImpl: CharactersRepositoryImpl): CharactersRepository
 
     @Binds
-    fun bindPersonageRepositoryImpl(personageRepositoryImpl: PersonageRepositoryImpl) : PersonageRepository
+    fun bindPersonageRepositoryImpl(personageRepositoryImpl: PersonageRepositoryImpl): PersonageRepository
 
     @Binds
-    fun bindEpisodesRepositoryImpl(episodesRepositoryImpl: EpisodesRepositoryImpl) : EpisodesRepository
+    fun bindEpisodesRepositoryImpl(episodesRepositoryImpl: EpisodesRepositoryImpl): EpisodesRepository
 
     @Binds
-    fun bindLocationsRepositoryImpl(locationsRepositoryImpl: LocationsRepositoryImpl) : LocationsRepository
+    fun bindLocationsRepositoryImpl(locationsRepositoryImpl: LocationsRepositoryImpl): LocationsRepository
 
     @Binds
-    fun bindPlaceRepositoryImpl(placeRepositoryImpl: PlaceRepositoryImpl) : PlaceRepository
+    fun bindPlaceRepositoryImpl(placeRepositoryImpl: PlaceRepositoryImpl): PlaceRepository
+
+    @Binds
+    fun provideCharactersDataSource(charactersDataSourceImpl: CharactersDataSourceImpl): CharactersDataSource
+
+
+    @Binds
+    fun provideEpisodesDataSource(episodesDataSourceImpl: EpisodesDataSourceImpl): EpisodesDataSource
+
+    @Binds
+    fun provideLocationsDataSource(locationsDataSourceImpl: LocationsDataSourceImpl): LocationsDataSource
 }

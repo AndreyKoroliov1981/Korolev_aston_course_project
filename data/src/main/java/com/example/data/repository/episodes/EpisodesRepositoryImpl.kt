@@ -2,7 +2,7 @@ package com.example.data.repository.episodes
 
 import com.example.data.network.episodes.EpisodesRetrofitService
 import com.example.data.network.episodes.model.EpisodesResponse
-import com.example.data.repository.cache.EpisodesHistoryRepository
+import com.example.data.repository.cache.EpisodesDataSource
 import com.example.domain.characters.model.Response
 import com.example.domain.episodes.EpisodesRepository
 import com.example.domain.episodes.model.Episode
@@ -15,7 +15,7 @@ class EpisodesRepositoryImpl
 @Inject constructor(
     private val episodesMapper: EpisodesMapper,
     private var episodesRetrofitService: EpisodesRetrofitService,
-    private var episodesHistoryRepository: EpisodesHistoryRepository
+    private var episodesDataSource: EpisodesDataSource
 ) : EpisodesRepository {
     override suspend fun getEpisodes(): Response<List<Episode>> =
         withContext(Dispatchers.IO) {
@@ -28,7 +28,7 @@ class EpisodesRepositoryImpl
                     responseBody = response.body()
                     val historyData = episodesMapper.mapEpisodesToDb(responseBody!!)
                     for (i in historyData.indices) {
-                        episodesHistoryRepository.insertNoteEpisodes(historyData[i])
+                        episodesDataSource.insertNoteEpisodes(historyData[i])
                     }
                     return@withContext Response(
                         data = episodesMapper.mapEpisodesFromNetwork(responseBody),
@@ -46,7 +46,7 @@ class EpisodesRepositoryImpl
             } catch (e: java.lang.Exception) {
                 currentPage--
                 val historyData =
-                    episodesMapper.mapEpisodesFromDb(episodesHistoryRepository.allHistoryEpisodes())
+                    episodesMapper.mapEpisodesFromDb(episodesDataSource.allHistoryEpisodes())
                 return@withContext Response(
                     data = historyData,
                     errorText = e.toString()

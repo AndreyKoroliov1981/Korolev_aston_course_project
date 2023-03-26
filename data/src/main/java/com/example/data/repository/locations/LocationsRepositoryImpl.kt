@@ -2,7 +2,7 @@ package com.example.data.repository.locations
 
 import com.example.data.network.locations.LocationsRetrofitService
 import com.example.data.network.locations.model.LocationsResponse
-import com.example.data.repository.cache.LocationsHistoryRepository
+import com.example.data.repository.cache.LocationsDataSource
 import com.example.domain.characters.model.Response
 import com.example.domain.locations.LocationsRepository
 import com.example.domain.locations.model.Locations
@@ -15,7 +15,7 @@ class LocationsRepositoryImpl
 @Inject constructor(
     private val locationsMapper: LocationsMapper,
     private var locationsRetrofitService: LocationsRetrofitService,
-    private var historyRepository: LocationsHistoryRepository
+    private var locationsDataSource: LocationsDataSource
 ) : LocationsRepository {
     override suspend fun getLocations(): Response<List<Locations>> =
         withContext(Dispatchers.IO) {
@@ -28,7 +28,7 @@ class LocationsRepositoryImpl
                     responseBody = response.body()
                     val historyData = locationsMapper.mapLocationsToDb(responseBody!!)
                     for (i in historyData.indices) {
-                        historyRepository.insertNoteLocations(historyData[i])
+                        locationsDataSource.insertNoteLocations(historyData[i])
                     }
                     return@withContext Response(
                         data = locationsMapper.mapLocationsFromNetwork(responseBody!!),
@@ -46,7 +46,7 @@ class LocationsRepositoryImpl
             } catch (e: java.lang.Exception) {
                 currentPage--
                 val historyData =
-                    locationsMapper.mapLocationsFromDb(historyRepository.allHistoryLocations())
+                    locationsMapper.mapLocationsFromDb(locationsDataSource.allHistoryLocations())
                 return@withContext Response(
                     data = historyData,
                     errorText = e.toString()
