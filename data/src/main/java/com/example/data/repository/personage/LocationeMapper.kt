@@ -6,41 +6,47 @@ import com.example.domain.locations.model.Locations
 import javax.inject.Inject
 
 class LocationeMapper
-@Inject constructor(){
+@Inject constructor() {
     fun mapLocationeFromNetwork(locationeResponse: LocationeResponse): Locations {
-        return Locations(
-            id = locationeResponse.id,
-            name = locationeResponse.name,
-            type = locationeResponse.type,
-            dimension = locationeResponse.dimension,
-            residents = locationeResponse.residents,
-            url = locationeResponse.url,
-            created = locationeResponse.created
-        )
+        return with(locationeResponse) {
+            Locations(
+                id = id,
+                name = name,
+                type = type,
+                dimension = dimension,
+                residents = residents,
+                url = url,
+                created = created
+            )
+        }
     }
 
     fun mapLocationsToDb(locations: Locations): LocationsDb {
-        return LocationsDb(
-            id = locations.id,
-            name = locations.name,
-            type = locations.type,
-            dimension = locations.dimension,
-            residents = locations.residents,
-            url = locations.url,
-            created = locations.created
-        )
+        return with(locations) {
+            LocationsDb(
+                id = id,
+                name = name,
+                type = type,
+                dimension = dimension,
+                residents = residents,
+                url = url,
+                created = created
+            )
+        }
     }
 
     fun mapLocationsFromDb(locationsDb: LocationsDb?): Locations? {
         if (locationsDb == null) return null
-        return Locations(
-            id = locationsDb.id,
-            name = locationsDb.name,
-            type = locationsDb.type,
-            dimension = locationsDb.dimension,
-            residents = locationsDb.residents,
-            url = locationsDb.url,
-            created = locationsDb.created
-        )
+        return with(locationsDb) {
+            Locations(
+                id = id,
+                name = name,
+                type = type,
+                dimension = dimension,
+                residents = residents,
+                url = url,
+                created = created
+            )
+        }
     }
 }

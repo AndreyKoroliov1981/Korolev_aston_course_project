@@ -5,15 +5,17 @@ import javax.inject.Inject
 
 class EpisodesUiMapper
 @Inject constructor() {
-    fun mapEpisodesFromDomain(episode: Episode): EpisodesUi {
-        return EpisodesUi(
-            id = episode.id,
-            name = episode.name,
-            airDate = episode.airDate,
-            episode = episode.episode,
-            characters = episode.characters,
-            url = episode.url,
-            created = episode.created
-        )
+    fun mapEpisodesFromDomain(episod: Episode): EpisodesUi {
+        return with(episod) {
+            EpisodesUi(
+                id = id,
+                name = name,
+                airDate = airDate,
+                episode = episode,
+                characters = characters,
+                url = url,
+                created = created
+            )
+        }
     }
 }

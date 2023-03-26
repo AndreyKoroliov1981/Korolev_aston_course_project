@@ -6,14 +6,16 @@ import javax.inject.Inject
 class LocationsUiMapper
 @Inject constructor() {
     fun mapLocationsFromDomain(location: Locations): LocationsUi {
-        return LocationsUi(
-            id = location.id,
-            name = location.name,
-            type = location.type,
-            dimension = location.dimension,
-            residents = location.residents,
-            url = location.url,
-            created = location.created
-        )
+        return with (location) {
+            LocationsUi(
+                id = id,
+                name = name,
+                type = type,
+                dimension = dimension,
+                residents = residents,
+                url = url,
+                created = created
+            )
+        }
     }
 }

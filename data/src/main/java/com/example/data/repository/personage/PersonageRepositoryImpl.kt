@@ -1,12 +1,11 @@
 package com.example.data.repository.personage
 
-import android.util.Log
 import com.example.data.database.episodes.EpisodesDb
 import com.example.data.network.episodes.model.EpisodeResponse
 import com.example.data.network.locations.model.LocationeResponse
 import com.example.data.network.personage.PersonageRetrofitService
-import com.example.data.repository.cache.HistoryRepositoryEpisodes
-import com.example.data.repository.cache.HistoryRepositoryLocations
+import com.example.data.repository.cache.EpisodesHistoryRepository
+import com.example.data.repository.cache.LocationsHistoryRepository
 import com.example.domain.characters.model.Response
 import com.example.domain.episodes.model.Episode
 import com.example.domain.locations.model.Locations
@@ -20,8 +19,8 @@ class PersonageRepositoryImpl
     private val episodeMapper: EpisodeMapper,
     private val locationeMapper: LocationeMapper,
     private var personageRetrofitService: PersonageRetrofitService,
-    private var historyRepositoryEpisodes: HistoryRepositoryEpisodes,
-    private var historyRepositoryLocations: HistoryRepositoryLocations
+    private var historyRepositoryEpisodes: EpisodesHistoryRepository,
+    private var locationsHistoryRepository: LocationsHistoryRepository
 ) : PersonageRepository {
     override suspend fun getEpisodes(queryString: String): Response<List<Episode>> {
         val answer = try {
@@ -58,7 +57,7 @@ class PersonageRepositoryImpl
             val data =
                 locationeMapper.mapLocationeFromNetwork(requestLocations(queryString).blockingGet()!!)
             val historyData = locationeMapper.mapLocationsToDb(data)
-            historyRepositoryLocations.insertNoteLocations(historyData)
+            locationsHistoryRepository.insertNoteLocations(historyData)
             Response(
                 data,
                 null
@@ -75,7 +74,7 @@ class PersonageRepositoryImpl
             )
             val locations =
                 locationeMapper.mapLocationsFromDb(
-                    historyRepositoryLocations.getByIdLocations(
+                    locationsHistoryRepository.getByIdLocations(
                         queryString.toLong()
                     )
                 ) ?: emptyLocations

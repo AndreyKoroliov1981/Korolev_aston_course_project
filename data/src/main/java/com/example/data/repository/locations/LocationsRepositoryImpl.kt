@@ -2,7 +2,7 @@ package com.example.data.repository.locations
 
 import com.example.data.network.locations.LocationsRetrofitService
 import com.example.data.network.locations.model.LocationsResponse
-import com.example.data.repository.cache.HistoryRepositoryLocations
+import com.example.data.repository.cache.LocationsHistoryRepository
 import com.example.domain.characters.model.Response
 import com.example.domain.locations.LocationsRepository
 import com.example.domain.locations.model.Locations
@@ -15,7 +15,7 @@ class LocationsRepositoryImpl
 @Inject constructor(
     private val locationsMapper: LocationsMapper,
     private var locationsRetrofitService: LocationsRetrofitService,
-    private var historyRepository: HistoryRepositoryLocations
+    private var historyRepository: LocationsHistoryRepository
 ) : LocationsRepository {
     override suspend fun getLocations(): Response<List<Locations>> =
         withContext(Dispatchers.IO) {

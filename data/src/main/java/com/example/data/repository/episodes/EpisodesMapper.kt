@@ -6,19 +6,21 @@ import com.example.domain.episodes.model.Episode
 import javax.inject.Inject
 
 class EpisodesMapper
-@Inject constructor(){
+@Inject constructor() {
     fun mapEpisodesFromNetwork(episodesResponse: EpisodesResponse): List<Episode> {
         val newList = mutableListOf<Episode>()
         for (i in episodesResponse.results.indices) {
-            val newEpisode = Episode(
-                id = episodesResponse.results[i].id,
-                name = episodesResponse.results[i].name,
-                airDate = episodesResponse.results[i].airDate,
-                episode = episodesResponse.results[i].episode,
-                characters = episodesResponse.results[i].characters,
-                url = episodesResponse.results[i].url,
-                created = episodesResponse.results[i].created
-            )
+            val newEpisode = with(episodesResponse.results[i]) {
+                Episode(
+                    id = id,
+                    name = name,
+                    airDate = airDate,
+                    episode = episode,
+                    characters = characters,
+                    url = url,
+                    created = created
+                )
+            }
             newList.add(newEpisode)
         }
         return newList
@@ -27,15 +29,17 @@ class EpisodesMapper
     fun mapEpisodesToDb(episodesResponse: EpisodesResponse): List<EpisodesDb> {
         val newList = mutableListOf<EpisodesDb>()
         for (i in episodesResponse.results.indices) {
-            val newEpisodes = EpisodesDb(
-                id = episodesResponse.results[i].id,
-                name = episodesResponse.results[i].name,
-                airDate = episodesResponse.results[i].airDate,
-                episode = episodesResponse.results[i].episode,
-                characters = episodesResponse.results[i].characters,
-                url = episodesResponse.results[i].url,
-                created = episodesResponse.results[i].created
-            )
+            val newEpisodes = with(episodesResponse.results[i]) {
+                EpisodesDb(
+                    id = id,
+                    name = name,
+                    airDate = airDate,
+                    episode = episode,
+                    characters = characters,
+                    url = url,
+                    created = created
+                )
+            }
             newList.add(newEpisodes)
         }
         return newList
@@ -44,15 +48,17 @@ class EpisodesMapper
     fun mapEpisodesFromDb(episodesDb: List<EpisodesDb>): List<Episode> {
         val newList = mutableListOf<Episode>()
         for (i in episodesDb.indices) {
-            val newEpisodes = Episode(
-                id = episodesDb[i].id,
-                name = episodesDb[i].name,
-                airDate = episodesDb[i].airDate,
-                episode = episodesDb[i].episode,
-                characters = episodesDb[i].characters,
-                url = episodesDb[i].url,
-                created = episodesDb[i].created
-            )
+            val newEpisodes = with(episodesDb[i]) {
+                Episode(
+                    id = id,
+                    name = name,
+                    airDate = airDate,
+                    episode = episode,
+                    characters = characters,
+                    url = url,
+                    created = created
+                )
+            }
             newList.add(newEpisodes)
         }
         return newList

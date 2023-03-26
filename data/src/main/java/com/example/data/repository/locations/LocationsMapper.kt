@@ -12,15 +12,17 @@ class LocationsMapper
     fun mapLocationsFromNetwork(locationsResponse: LocationsResponse): List<Locations> {
         val newList = mutableListOf<Locations>()
         for (i in locationsResponse.results.indices) {
-            val newEpisode = Locations(
-                id = locationsResponse.results[i].id,
-                name = locationsResponse.results[i].name,
-                type = locationsResponse.results[i].type,
-                dimension = locationsResponse.results[i].dimension,
-                residents = locationsResponse.results[i].residents,
-                url = locationsResponse.results[i].url,
-                created = locationsResponse.results[i].created
-            )
+            val newEpisode = with(locationsResponse.results[i]) {
+                Locations(
+                    id = id,
+                    name = name,
+                    type = type,
+                    dimension = dimension,
+                    residents = residents,
+                    url = url,
+                    created = created
+                )
+            }
             newList.add(newEpisode)
         }
         return newList
@@ -29,15 +31,17 @@ class LocationsMapper
     fun mapLocationsToDb(locationsResponse: LocationsResponse): List<LocationsDb> {
         val newList = mutableListOf<LocationsDb>()
         for (i in locationsResponse.results.indices) {
-            val newCharacters = LocationsDb(
-                id = locationsResponse.results[i].id,
-                name = locationsResponse.results[i].name,
-                type = locationsResponse.results[i].type,
-                dimension = locationsResponse.results[i].dimension,
-                residents = locationsResponse.results[i].residents,
-                url = locationsResponse.results[i].url,
-                created = locationsResponse.results[i].created
-            )
+            val newCharacters = with(locationsResponse.results[i]) {
+                LocationsDb(
+                    id = id,
+                    name = name,
+                    type = type,
+                    dimension = dimension,
+                    residents = residents,
+                    url = url,
+                    created = created
+                )
+            }
             newList.add(newCharacters)
         }
         return newList
@@ -46,15 +50,17 @@ class LocationsMapper
     fun mapLocationsFromDb(locationsDb: List<LocationsDb>): List<Locations> {
         val newList = mutableListOf<Locations>()
         for (i in locationsDb.indices) {
-            val newCharacters = Locations(
-                id = locationsDb[i].id,
-                name = locationsDb[i].name,
-                type = locationsDb[i].type,
-                dimension = locationsDb[i].dimension,
-                residents = locationsDb[i].residents,
-                url = locationsDb[i].url,
-                created = locationsDb[i].created
-            )
+            val newCharacters = with(locationsDb[i]) {
+                Locations(
+                    id = id,
+                    name = name,
+                    type = type,
+                    dimension = dimension,
+                    residents = residents,
+                    url = url,
+                    created = created
+                )
+            }
             newList.add(newCharacters)
         }
         return newList

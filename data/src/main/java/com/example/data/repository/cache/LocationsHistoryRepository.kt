@@ -2,7 +2,7 @@ package com.example.data.repository.cache
 
 import com.example.data.database.locations.LocationsDb
 
-interface HistoryRepositoryLocations {
+interface LocationsHistoryRepository {
     suspend fun allHistoryLocations(): List<LocationsDb>
     suspend fun insertNoteLocations(locationsDb: LocationsDb): Long
     suspend fun deleteNoteLocations(locationsDb: LocationsDb)

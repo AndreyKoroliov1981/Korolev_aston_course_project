@@ -9,10 +9,6 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         appComponent = DaggerAppComponent.factory().create(context = applicationContext)
-//            old version
-//            .builder()
-//            .appModule(AppModule(context = this))
-//            .build()
     }
 
     companion object {

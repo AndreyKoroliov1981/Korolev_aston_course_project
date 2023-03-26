@@ -12,9 +12,7 @@ import com.example.data.network.personage.PersonageCommon
 import com.example.data.network.personage.PersonageRetrofitService
 import com.example.data.network.place.PlaceCommon
 import com.example.data.network.place.PlaceRetrofitService
-import com.example.data.repository.cache.HistoryRepositoryCharacters
-import com.example.data.repository.cache.HistoryRepositoryEpisodes
-import com.example.data.repository.cache.HistoryRepositoryLocations
+import com.example.data.repository.cache.*
 import com.example.data.repository.characters.CharactersMapper
 import com.example.data.repository.characters.CharactersRepositoryImpl
 import com.example.data.repository.episodes.EpisodesMapper
@@ -63,17 +61,17 @@ class DataModule {
     }
 
     @Provides
-    fun provideHistoryRepository(context: Context): HistoryRepositoryCharacters {
+    fun provideHistoryRepository(context: Context): CharactersHistoryRepository {
         return HistoryManager(context = context)
     }
 
     @Provides
-    fun provideHistoryRepositoryLocations(context: Context): HistoryRepositoryLocations {
+    fun provideHistoryRepositoryLocations(context: Context): LocationsHistoryRepository {
         return HistoryManager(context = context)
     }
 
     @Provides
-    fun provideHistoryRepositoryEpisodes(context: Context): HistoryRepositoryEpisodes {
+    fun provideHistoryRepositoryEpisodes(context: Context): EpisodesHistoryRepository {
         return HistoryManager(context = context)
     }
 }

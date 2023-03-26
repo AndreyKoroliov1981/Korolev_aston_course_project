@@ -2,7 +2,7 @@ package com.example.data.repository.characters
 
 import com.example.data.network.characters.CharactersRetrofitService
 import com.example.data.network.characters.model.CharactersResponse
-import com.example.data.repository.cache.HistoryRepositoryCharacters
+import com.example.data.repository.cache.CharactersHistoryRepository
 import com.example.domain.characters.CharactersRepository
 import com.example.domain.characters.model.Characters
 import com.example.domain.characters.model.Response
@@ -14,7 +14,7 @@ class CharactersRepositoryImpl
 @Inject constructor(
     private val charactersMapper: CharactersMapper,
     private var charactersRetrofitService: CharactersRetrofitService,
-    private var historyRepository: HistoryRepositoryCharacters
+    private var charactersHistoryRepository: CharactersHistoryRepository
 ) : CharactersRepository {
     override suspend fun getCharacters(): Response<List<Characters>> =
         withContext(Dispatchers.IO) {
@@ -27,7 +27,7 @@ class CharactersRepositoryImpl
                     responseBody = response.body()
                     val historyData = charactersMapper.mapCharactersToDb(responseBody!!)
                     for (i in historyData.indices) {
-                        historyRepository.insertNote(historyData[i])
+                        charactersHistoryRepository.insertNote(historyData[i])
                     }
                     return@withContext Response(
                         data = charactersMapper.mapCharactersFromNetwork(responseBody),
@@ -45,7 +45,7 @@ class CharactersRepositoryImpl
             } catch (e: java.lang.Exception) {
                 currentPage--
                 val historyData =
-                    charactersMapper.mapCharactersFromDb(historyRepository.allHistory())
+                    charactersMapper.mapCharactersFromDb(charactersHistoryRepository.allHistory())
                 return@withContext Response(
                     data = historyData,
                     errorText = e.toString()

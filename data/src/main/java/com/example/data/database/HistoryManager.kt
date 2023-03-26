@@ -7,12 +7,10 @@ import com.example.data.database.episodes.EpisodesDb
 import com.example.data.database.episodes.HistoryRealizationEpisodes
 import com.example.data.database.locations.HistoryRealizationLocations
 import com.example.data.database.locations.LocationsDb
-import com.example.data.repository.cache.HistoryRepositoryCharacters
-import com.example.data.repository.cache.HistoryRepositoryEpisodes
-import com.example.data.repository.cache.HistoryRepositoryLocations
+import com.example.data.repository.cache.*
 
-class HistoryManager(context: Context) : HistoryRepositoryCharacters, HistoryRepositoryLocations,
-    HistoryRepositoryEpisodes {
+class HistoryManager(context: Context) : CharactersHistoryRepository, LocationsHistoryRepository,
+    EpisodesHistoryRepository {
     private val daoHistory = HistoryDataBase.getInstance(context).getHistoryDao()
 
     private val daoLocations = HistoryDataBase.getInstance(context).getLocationsDao()

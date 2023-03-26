@@ -3,7 +3,7 @@ package com.example.data.repository.place
 import com.example.data.database.characters.CharactersDb
 import com.example.data.network.characters.model.PersonResponse
 import com.example.data.network.place.PlaceRetrofitService
-import com.example.data.repository.cache.HistoryRepositoryCharacters
+import com.example.data.repository.cache.CharactersHistoryRepository
 import com.example.domain.characters.model.Characters
 import com.example.domain.characters.model.Response
 import com.example.domain.place.PlaceRepository
@@ -15,7 +15,7 @@ class PlaceRepositoryImpl
 @Inject constructor(
     private val placeMapper: PlaceMapper,
     private var placeRetrofitService: PlaceRetrofitService,
-    private var historyRepositoryCharacters: HistoryRepositoryCharacters
+    private var charactersHistoryRepository: CharactersHistoryRepository
 ) : PlaceRepository {
     override suspend fun getResidents(queryString: String): Response<List<Characters>> {
         val answer = try {
@@ -23,7 +23,7 @@ class PlaceRepositoryImpl
                 placeMapper.mapPlaceFromNetwork(requestRXJavaRetrofit(queryString).blockingGet())
             val historyData = placeMapper.mapCharactersToDb(data)
             for (i in historyData.indices) {
-                historyRepositoryCharacters.insertNote(historyData[i])
+                charactersHistoryRepository.insertNote(historyData[i])
             }
             Response(
                 data,
@@ -33,7 +33,7 @@ class PlaceRepositoryImpl
             val listId = queryString.split(",")
             val newList = mutableListOf<CharactersDb>()
             for (i in listId.indices) {
-                val newEpisodeDb = historyRepositoryCharacters.getById(listId[i].toLong())
+                val newEpisodeDb = charactersHistoryRepository.getById(listId[i].toLong())
                 newEpisodeDb?.let { newList.add(newEpisodeDb) }
             }
             Response(placeMapper.mapCharactersFromDb(newList), t.message)
