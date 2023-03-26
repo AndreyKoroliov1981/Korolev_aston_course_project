@@ -2,6 +2,7 @@ package com.example.domain.personage
 
 import com.example.domain.characters.model.Response
 import com.example.domain.episodes.model.Episode
+import com.example.domain.locations.model.Locations
 
 class PersonageInteractorImpl(
     private val personageRepository: PersonageRepository
@@ -15,5 +16,10 @@ class PersonageInteractorImpl(
             queryString += ","
         }
         return personageRepository.getEpisodes(queryString)
+    }
+
+    override suspend fun getLocations(locations: String): Response<Locations> {
+        val queryString = locations.substringAfterLast('/')
+        return personageRepository.getLocations(queryString)
     }
 }

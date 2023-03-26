@@ -12,6 +12,11 @@ import com.example.domain.locations.LocationsRepository
 import com.example.domain.personage.PersonageInteractor
 import com.example.domain.personage.PersonageInteractorImpl
 import com.example.domain.personage.PersonageRepository
+import com.example.domain.place.PlaceInteractor
+import com.example.domain.place.PlaceInteractorImpl
+import com.example.domain.place.PlaceRepository
+import com.example.domain.series.SeriesInteractor
+import com.example.domain.series.SeriesInteractorImpl
 import dagger.Module
 import dagger.Provides
 
@@ -39,6 +44,24 @@ class DomainModule {
     @Provides
     fun provideLocationsInteractor(locationsRepository: LocationsRepository): LocationsInteractor {
         return LocationsInteractorImpl(locationsRepository = locationsRepository)
+    }
+
+    @Provides
+    fun providePlaceInteractor(
+        placeRepository: PlaceRepository
+    ): PlaceInteractor {
+        return PlaceInteractorImpl(
+            placeRepository = placeRepository
+        )
+    }
+
+    @Provides
+    fun provideSeriesInteractor(
+        placeRepository: PlaceRepository
+    ): SeriesInteractor {
+        return SeriesInteractorImpl(
+            placeRepository = placeRepository
+        )
     }
 
 }

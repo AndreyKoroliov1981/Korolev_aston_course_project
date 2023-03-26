@@ -8,6 +8,8 @@ import com.example.data.network.locations.LocationsCommon
 import com.example.data.network.locations.LocationsRetrofitService
 import com.example.data.network.personage.PersonageCommon
 import com.example.data.network.personage.PersonageRetrofitService
+import com.example.data.network.place.PlaceCommon
+import com.example.data.network.place.PlaceRetrofitService
 import com.example.data.repository.characters.CharactersMapper
 import com.example.data.repository.characters.CharactersRepositoryImpl
 import com.example.data.repository.episodes.EpisodesMapper
@@ -15,11 +17,15 @@ import com.example.data.repository.episodes.EpisodesRepositoryImpl
 import com.example.data.repository.locations.LocationsMapper
 import com.example.data.repository.locations.LocationsRepositoryImpl
 import com.example.data.repository.personage.EpisodeMapper
+import com.example.data.repository.personage.LocationeMapper
 import com.example.data.repository.personage.PersonageRepositoryImpl
+import com.example.data.repository.place.PlaceMapper
+import com.example.data.repository.place.PlaceRepositoryImpl
 import com.example.domain.characters.CharactersRepository
 import com.example.domain.episodes.EpisodesRepository
 import com.example.domain.locations.LocationsRepository
 import com.example.domain.personage.PersonageRepository
+import com.example.domain.place.PlaceRepository
 import dagger.Module
 import dagger.Provides
 
@@ -49,12 +55,19 @@ class DataModule {
     @Provides
     fun providePersonageRepository(
         episodeMapper: EpisodeMapper,
+        locationeMapper: LocationeMapper,
         personageRetrofitService: PersonageRetrofitService
     ): PersonageRepository {
         return PersonageRepositoryImpl(
             episodeMapper = episodeMapper,
+            locationeMapper = locationeMapper,
             personageRetrofitService = personageRetrofitService
         )
+    }
+
+    @Provides
+    fun provideLocationeMapper(): LocationeMapper {
+        return LocationeMapper()
     }
 
     @Provides
@@ -107,5 +120,26 @@ class DataModule {
     @Provides
     fun provideLocationsRetrofitService(): LocationsRetrofitService {
         return LocationsCommon.locationsRetrofitService
+    }
+
+    @Provides
+    fun providePlaceRepository(
+        placeMapper: PlaceMapper,
+        placeRetrofitService: PlaceRetrofitService
+    ): PlaceRepository {
+        return PlaceRepositoryImpl(
+            placeMapper = placeMapper,
+            placeRetrofitService = placeRetrofitService
+        )
+    }
+
+    @Provides
+    fun providePlaceMapper(): PlaceMapper {
+        return PlaceMapper()
+    }
+
+    @Provides
+    fun providePlaceRetrofitService(): PlaceRetrofitService {
+        return PlaceCommon.placeRetrofitService
     }
 }

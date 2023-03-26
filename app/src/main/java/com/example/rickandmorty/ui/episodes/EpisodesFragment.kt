@@ -33,6 +33,7 @@ import com.example.rickandmorty.ui.characters.recycler.RVOnClickCharactersListen
 import com.example.rickandmorty.ui.episodes.recycler.EpisodesAdapter
 import com.example.rickandmorty.ui.episodes.recycler.RVOnClickEpisodesListeners
 import com.example.rickandmorty.ui.personage.PersonageFragment
+import com.example.rickandmorty.ui.series.SeriesFragment
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
@@ -50,11 +51,11 @@ class EpisodesFragment: Fragment() {
         object : RVOnClickEpisodesListeners {
             override fun onClicked(item: Episode) {
                 val itemUi = viewModel.mapEpisodeToEpisodesUi(item)
-                //TODO add transaction
-//                parentFragmentManager.beginTransaction()
-//                    .replace(R.id.fragment_container_view, PersonageFragment.newInstance(itemUI), FragmentsTags.Personage.tag)
-//                    .addToBackStack(null)
-//                    .commit()
+
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container_view, SeriesFragment.newInstance(itemUi), FragmentsTags.Series.tag)
+                    .addToBackStack(null)
+                    .commit()
             }
         }
     )
