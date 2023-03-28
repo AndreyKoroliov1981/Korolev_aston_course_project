@@ -1,25 +1,42 @@
 package com.example.data.repository.place
 
+import com.example.data.database.characters.CharactersDb
 import com.example.data.network.characters.model.PersonResponse
 import com.example.data.network.place.PlaceRetrofitService
+import com.example.data.repository.cache.CharactersDataSource
 import com.example.domain.characters.model.Characters
 import com.example.domain.characters.model.Response
 import com.example.domain.place.PlaceRepository
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
-class PlaceRepositoryImpl(
+class PlaceRepositoryImpl
+@Inject constructor(
     private val placeMapper: PlaceMapper,
-    private var placeRetrofitService: PlaceRetrofitService
+    private var placeRetrofitService: PlaceRetrofitService,
+    private var charactersDataSource: CharactersDataSource
 ) : PlaceRepository {
     override suspend fun getResidents(queryString: String): Response<List<Characters>> {
         val answer = try {
+            val data =
+                placeMapper.mapPlaceFromNetwork(requestRXJavaRetrofit(queryString).blockingGet())
+            val historyData = placeMapper.mapCharactersToDb(data)
+            for (i in historyData.indices) {
+                charactersDataSource.insertNote(historyData[i])
+            }
             Response(
-                placeMapper.mapPlaceFromNetwork(requestRXJavaRetrofit(queryString).blockingGet()),
+                data,
                 null
             )
         } catch (t: Throwable) {
-            Response(emptyList(), t.message)
+            val listId = queryString.split(",")
+            val newList = mutableListOf<CharactersDb>()
+            for (i in listId.indices) {
+                val newEpisodeDb = charactersDataSource.getById(listId[i].toLong())
+                newEpisodeDb?.let { newList.add(newEpisodeDb) }
+            }
+            Response(placeMapper.mapCharactersFromDb(newList), t.message)
         }
         return answer
     }

@@ -16,7 +16,8 @@ const val STATUS_DEAD = "Dead"
 const val STATUS_UNKNOWN = "unknown"
 const val DEBOUNCE_MILS = 300L
 
-class CharactersViewModel (
+class CharactersViewModel
+@Inject constructor(
     private val charactersInteractor: CharactersInteractor,
     private val charactersUiMapper: CharactersUiMapper,
 ) : BaseViewModel<CharactersState>(CharactersState()) {
@@ -67,6 +68,10 @@ class CharactersViewModel (
                 isCheckedEndLoadFromApi = listCharacters.isEmpty()
             } else {
                 isCheckedEndLoadFromApi = false
+                if (responseListCharacters.data != null) {
+                    val newCharacters = responseListCharacters.data!!
+                    updateState { copy(characters = newCharacters) }
+                }
                 sideEffectSharedFlow.emit(IsErrorData(responseListCharacters.errorText!!))
             }
         }

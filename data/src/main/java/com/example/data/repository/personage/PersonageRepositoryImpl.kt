@@ -1,29 +1,47 @@
 package com.example.data.repository.personage
 
-import android.util.Log
+import com.example.data.database.episodes.EpisodesDb
 import com.example.data.network.episodes.model.EpisodeResponse
 import com.example.data.network.locations.model.LocationeResponse
 import com.example.data.network.personage.PersonageRetrofitService
+import com.example.data.repository.cache.EpisodesDataSource
+import com.example.data.repository.cache.LocationsDataSource
 import com.example.domain.characters.model.Response
 import com.example.domain.episodes.model.Episode
 import com.example.domain.locations.model.Locations
 import com.example.domain.personage.PersonageRepository
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
+import javax.inject.Inject
 
-class PersonageRepositoryImpl(
+class PersonageRepositoryImpl
+@Inject constructor(
     private val episodeMapper: EpisodeMapper,
     private val locationeMapper: LocationeMapper,
     private var personageRetrofitService: PersonageRetrofitService,
+    private var episodesDataSource: EpisodesDataSource,
+    private var locationsDataSource: LocationsDataSource
 ) : PersonageRepository {
     override suspend fun getEpisodes(queryString: String): Response<List<Episode>> {
         val answer = try {
+            val data =
+                episodeMapper.mapEpisodeFromNetwork(requestRXJavaRetrofit(queryString).blockingGet())
+            val historyData = episodeMapper.mapEpisodeToDb(data)
+            for (i in historyData.indices) {
+                episodesDataSource.insertNoteEpisodes(historyData[i])
+            }
             Response(
-                episodeMapper.mapEpisodeFromNetwork(requestRXJavaRetrofit(queryString).blockingGet()),
+                data,
                 null
             )
         } catch (t: Throwable) {
-            Response(emptyList(), t.message)
+            val listId = queryString.split(",")
+            val newList = mutableListOf<EpisodesDb>()
+            for (i in listId.indices) {
+                val newEpisodeDb = episodesDataSource.getByIdEpisodes(listId[i].toLong())
+                newEpisodeDb?.let { newList.add(newEpisodeDb) }
+            }
+            Response(episodeMapper.mapEpisodeFromDb(newList), t.message)
         }
         return answer
     }
@@ -36,8 +54,12 @@ class PersonageRepositoryImpl(
 
     override suspend fun getLocations(queryString: String): Response<Locations> {
         val answer = try {
+            val data =
+                locationeMapper.mapLocationeFromNetwork(requestLocations(queryString).blockingGet()!!)
+            val historyData = locationeMapper.mapLocationsToDb(data)
+            locationsDataSource.insertNoteLocations(historyData)
             Response(
-                locationeMapper.mapLocationeFromNetwork(requestLocations(queryString).blockingGet()!!),
+                data,
                 null
             )
         } catch (t: Throwable) {
@@ -50,7 +72,13 @@ class PersonageRepositoryImpl(
                 url = "",
                 created = ""
             )
-            Response (emptyLocations, t.message)
+            val locations =
+                locationeMapper.mapLocationsFromDb(
+                    locationsDataSource.getByIdLocations(
+                        queryString.toLong()
+                    )
+                ) ?: emptyLocations
+            Response(locations, t.message)
         }
         return answer
     }

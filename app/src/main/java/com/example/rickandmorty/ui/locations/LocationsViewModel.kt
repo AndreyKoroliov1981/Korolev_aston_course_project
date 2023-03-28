@@ -9,8 +9,10 @@ import com.example.rickandmorty.ui.locations.model.LocationsUi
 import com.example.rickandmorty.ui.locations.model.LocationsUiMapper
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
-class LocationsViewModel (
+class LocationsViewModel
+@Inject constructor(
     private val locationsInteractor: LocationsInteractor,
     private val locationsUiMapper: LocationsUiMapper,
 ) : BaseViewModel<LocationsState>(LocationsState()) {
@@ -38,19 +40,23 @@ class LocationsViewModel (
             updateState { copy(dataLoading = true) }
             var isCheckedEndLoadFromApi = true
             while (isCheckedEndLoadFromApi) {
-                val responseListEpisodes =
+                val responseListLocations =
                     locationsInteractor.getLocations(
                         searchName = state.searchName,
                         searchType = state.searchType
                     )
-                if (responseListEpisodes.errorText == null) {
-                    val listEpisodes = responseListEpisodes.data ?: emptyList()
-                    isCheckedEndLoadFromApi = listEpisodes.isEmpty()
-                    val newEpisodes = state.locations + listEpisodes
+                if (responseListLocations.errorText == null) {
+                    val listLocations = responseListLocations.data ?: emptyList()
+                    isCheckedEndLoadFromApi = listLocations.isEmpty()
+                    val newEpisodes = state.locations + listLocations
                     updateState { copy(locations = newEpisodes) }
                 } else {
                     isCheckedEndLoadFromApi = false
-                    sideEffectSharedFlow.emit(IsErrorData(responseListEpisodes.errorText!!))
+                    if (responseListLocations.data != null) {
+                        val newLocations = responseListLocations.data!!
+                        updateState { copy(locations = newLocations) }
+                    }
+                    sideEffectSharedFlow.emit(IsErrorData(responseListLocations.errorText!!))
                 }
                 updateState { copy(dataLoading = false) }
             }

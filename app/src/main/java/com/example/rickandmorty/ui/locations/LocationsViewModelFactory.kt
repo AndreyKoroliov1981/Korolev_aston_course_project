@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.domain.locations.LocationsInteractor
 import com.example.rickandmorty.ui.locations.model.LocationsUiMapper
+import javax.inject.Inject
 
-class LocationsViewModelFactory(
-    val locationsInteractor: LocationsInteractor,
-    val locationsUiMapper: LocationsUiMapper,
+class LocationsViewModelFactory
+@Inject constructor(
+    private val locationsInteractor: LocationsInteractor,
+    private val locationsUiMapper: LocationsUiMapper,
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return LocationsViewModel(

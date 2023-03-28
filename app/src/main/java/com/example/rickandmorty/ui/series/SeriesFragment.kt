@@ -18,7 +18,7 @@ import com.example.domain.characters.model.Characters
 import com.example.domain.episodes.model.Episode
 import com.example.rickandmorty.FragmentsTags
 import com.example.rickandmorty.R
-import com.example.rickandmorty.ShowBottomNavBar
+import com.example.rickandmorty.ShowBottomNavBarProvider
 import com.example.rickandmorty.app.App.Companion.appComponent
 import com.example.rickandmorty.common.IsErrorData
 import com.example.rickandmorty.databinding.FragmentSeriesBinding
@@ -31,10 +31,11 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class SeriesFragment: Fragment() {
+class SeriesFragment : Fragment() {
+
     private lateinit var binding: FragmentSeriesBinding
     private var series: EpisodesUi? = null
-    private var showBottomNavBar: ShowBottomNavBar? = null
+    private var showBottomNavBarProvider: ShowBottomNavBarProvider? = null
 
     @javax.inject.Inject
     lateinit var vmFactory: SeriesViewModel.PlaceViewModelFactory
@@ -73,7 +74,7 @@ class SeriesFragment: Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
-            showBottomNavBar = context as ShowBottomNavBar
+            showBottomNavBarProvider = context as ShowBottomNavBarProvider
         } catch (castException: ClassCastException) {
             // The activity does not implement the ShowBottomNavBar.
         }
@@ -90,15 +91,18 @@ class SeriesFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        showBottomNavBar?.show(false)
+        showBottomNavBarProvider?.show(false)
         binding.rvCharacter.adapter = charactersRVAdapter
         setBackArrowNavigationListener()
         setFields()
         setPullToRefresh()
 
         binding.apply {
-            lifecycleScope.launch {
+//            lifecycleScope.launch {  // old version
+//          Restartable Lifecycle-aware coroutines https://developer.android.com/topic/libraries/architecture/coroutines
+            viewLifecycleOwner.lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+
                     launch {
                         viewModel.stateFlow.collect {
                             binding.pbLoadData.isVisible = it.dataLoading
@@ -112,9 +116,9 @@ class SeriesFragment: Fragment() {
                     }
 
                     launch {
-                        viewModel.sideEffect.collectLatest {
-                            if (it is IsErrorData) {
-                                writeError(view, it.errorMessage)
+                        viewModel.sideEffect.collectLatest { sideEffect ->
+                            if (sideEffect is IsErrorData) {
+                                writeError(view, sideEffect.errorMessage)
                             }
                         }
                     }

@@ -2,43 +2,55 @@ package com.example.data.repository.locations
 
 import com.example.data.network.locations.LocationsRetrofitService
 import com.example.data.network.locations.model.LocationsResponse
+import com.example.data.repository.cache.LocationsDataSource
 import com.example.domain.characters.model.Response
 import com.example.domain.locations.LocationsRepository
 import com.example.domain.locations.model.Locations
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 
-class LocationsRepositoryImpl(
+class LocationsRepositoryImpl
+@Inject constructor(
     private val locationsMapper: LocationsMapper,
     private var locationsRetrofitService: LocationsRetrofitService,
-    //private var historyRepository: HistoryRepository
+    private var locationsDataSource: LocationsDataSource
 ) : LocationsRepository {
     override suspend fun getLocations(): Response<List<Locations>> =
         withContext(Dispatchers.IO) {
             currentPage++
             try {
                 val response = locationsRetrofitService.getAllLocations(currentPage).execute()
-                val responseBody : LocationsResponse?
-                val responseError : String?
+                val responseBody: LocationsResponse?
+                val responseError: String?
                 if (response.isSuccessful) {
                     responseBody = response.body()
+                    val historyData = locationsMapper.mapLocationsToDb(responseBody!!)
+                    for (i in historyData.indices) {
+                        locationsDataSource.insertNoteLocations(historyData[i])
+                    }
                     return@withContext Response(
                         data = locationsMapper.mapLocationsFromNetwork(responseBody!!),
-                        errorText = null)
+                        errorText = null
+                    )
                 } else {
                     currentPage--
                     responseError = TEXT_NO_MORE_DATA
                     return@withContext Response(
                         data = null,
-                        errorText = responseError)
+                        errorText = responseError
+                    )
                 }
 
             } catch (e: java.lang.Exception) {
                 currentPage--
+                val historyData =
+                    locationsMapper.mapLocationsFromDb(locationsDataSource.allHistoryLocations())
                 return@withContext Response(
-                    data = null,
-                    errorText = e.toString())
+                    data = historyData,
+                    errorText = e.toString()
+                )
             }
         }
 

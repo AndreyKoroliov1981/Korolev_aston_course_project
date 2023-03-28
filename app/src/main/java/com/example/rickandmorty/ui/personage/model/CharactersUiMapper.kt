@@ -2,23 +2,27 @@ package com.example.rickandmorty.ui.personage.model
 
 import com.example.domain.characters.model.Characters
 import com.example.domain.characters.model.Location
+import javax.inject.Inject
 
-class CharactersUiMapper {
+class CharactersUiMapper
+@Inject constructor(){
     fun mapCharactersFromDomain(characters: Characters): CharactersUi {
-        return CharactersUi(
-            id = characters.id,
-            name = characters.name,
-            status = characters.status,
-            species = characters.species,
-            type = characters.type,
-            gender = characters.gender,
-            origin = mapLocationFromDomain(characters.origin),
-            location = mapLocationFromDomain(characters.location),
-            image = characters.image,
-            episode = characters.episode,
-            url = characters.url,
-            created = characters.created
-        )
+        return with(characters) {
+            CharactersUi(
+                id = id,
+                name = name,
+                status = status,
+                species = species,
+                type = type,
+                gender = gender,
+                origin = mapLocationFromDomain(origin),
+                location = mapLocationFromDomain(location),
+                image = image,
+                episode = episode,
+                url = url,
+                created = created
+            )
+        }
     }
 
     private fun mapLocationFromDomain(location: Location) = LocationUi(

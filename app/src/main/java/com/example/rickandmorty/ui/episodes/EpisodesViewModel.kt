@@ -11,7 +11,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 
-class EpisodesViewModel (
+class EpisodesViewModel
+@Inject constructor(
     private val episodesInteractor: EpisodesInteractor,
     private val episodesUiMapper: EpisodesUiMapper,
 ) : BaseViewModel<EpisodesState>(EpisodesState()) {
@@ -51,6 +52,10 @@ class EpisodesViewModel (
                     updateState { copy(episodes = newEpisodes) }
                 } else {
                     isCheckedEndLoadFromApi = false
+                    if (responseListEpisodes.data != null) {
+                        val newEpisodes = responseListEpisodes.data!!
+                        updateState { copy(episodes = newEpisodes) }
+                    }
                     sideEffectSharedFlow.emit(IsErrorData(responseListEpisodes.errorText!!))
                 }
                 updateState { copy(dataLoading = false) }

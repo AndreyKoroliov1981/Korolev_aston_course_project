@@ -2,7 +2,6 @@ package com.example.rickandmorty.ui.episodes
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
 import androidx.activity.OnBackPressedCallback
@@ -21,18 +20,12 @@ import com.example.domain.episodes.model.Episode
 import com.example.rickandmorty.FragmentsTags
 import com.example.rickandmorty.MainActivity
 import com.example.rickandmorty.R
-import com.example.rickandmorty.ShowBottomNavBar
-import com.example.rickandmorty.app.App
+import com.example.rickandmorty.ShowBottomNavBarProvider
 import com.example.rickandmorty.app.App.Companion.appComponent
-import com.example.rickandmorty.common.IsEmptyFilter
 import com.example.rickandmorty.common.IsErrorData
 import com.example.rickandmorty.databinding.FragmentEpisodesBinding
-import com.example.rickandmorty.ui.characters.CharactersViewModel
-import com.example.rickandmorty.ui.characters.recycler.CharactersAdapter
-import com.example.rickandmorty.ui.characters.recycler.RVOnClickCharactersListeners
 import com.example.rickandmorty.ui.episodes.recycler.EpisodesAdapter
 import com.example.rickandmorty.ui.episodes.recycler.RVOnClickEpisodesListeners
-import com.example.rickandmorty.ui.personage.PersonageFragment
 import com.example.rickandmorty.ui.series.SeriesFragment
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
@@ -41,7 +34,7 @@ import kotlinx.coroutines.launch
 
 class EpisodesFragment: Fragment() {
     private lateinit var binding: FragmentEpisodesBinding
-    private var showBottomNavBar : ShowBottomNavBar? = null
+    private var showBottomNavBarProvider : ShowBottomNavBarProvider? = null
 
     @javax.inject.Inject
     lateinit var vmFactory: EpisodesViewModelFactory
@@ -74,7 +67,7 @@ class EpisodesFragment: Fragment() {
             callback
         )
         try {
-            showBottomNavBar = context as ShowBottomNavBar
+            showBottomNavBarProvider = context as ShowBottomNavBarProvider
         } catch (castException: ClassCastException) {
             // The activity does not implement the ShowBottomNavBar.
         }
@@ -91,7 +84,7 @@ class EpisodesFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        showBottomNavBar?.show(true)
+        showBottomNavBarProvider?.show(true)
         viewModel = ViewModelProvider(this, vmFactory).get(EpisodesViewModel::class.java)
         binding.rvEpisodes.adapter = episodesRVAdapter
         setRVScrollListeners()
@@ -99,7 +92,9 @@ class EpisodesFragment: Fragment() {
         setPullToRefresh()
 
         binding.apply {
-            lifecycleScope.launch {
+//            lifecycleScope.launch {  // old version
+//          Restartable Lifecycle-aware coroutines https://developer.android.com/topic/libraries/architecture/coroutines
+            viewLifecycleOwner.lifecycleScope.launch {
                 viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     launch {
                         viewModel.stateFlow.collect {
@@ -117,9 +112,9 @@ class EpisodesFragment: Fragment() {
                     }
 
                     launch {
-                        viewModel.sideEffect.collectLatest {
-                            if (it is IsErrorData) {
-                                writeError(view, it.errorMessage)
+                        viewModel.sideEffect.collectLatest { sideEffect ->
+                            if (sideEffect is IsErrorData) {
+                                writeError(view, sideEffect.errorMessage)
                             }
                         }
                     }

@@ -2,7 +2,6 @@ package com.example.rickandmorty.ui.personage
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -18,9 +17,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.example.domain.episodes.model.Episode
 import com.example.rickandmorty.FragmentsTags
-import com.example.rickandmorty.MainActivity
 import com.example.rickandmorty.R
-import com.example.rickandmorty.ShowBottomNavBar
+import com.example.rickandmorty.ShowBottomNavBarProvider
 import com.example.rickandmorty.app.App.Companion.appComponent
 import com.example.rickandmorty.common.IsErrorData
 import com.example.rickandmorty.databinding.FragmentPersonageBinding
@@ -36,9 +34,10 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class PersonageFragment : Fragment() {
+
     private lateinit var binding: FragmentPersonageBinding
     private var personage: CharactersUi? = null
-    private var showBottomNavBar: ShowBottomNavBar? = null
+    private var showBottomNavBarProvider: ShowBottomNavBarProvider? = null
 
     @javax.inject.Inject
     lateinit var vmFactory: PersonageViewModel.PersonageViewModelFactory
@@ -60,7 +59,7 @@ class PersonageFragment : Fragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
-            showBottomNavBar = context as ShowBottomNavBar
+            showBottomNavBarProvider = context as ShowBottomNavBarProvider
         } catch (castException: ClassCastException) {
             // The activity does not implement the ShowBottomNavBar.
         }
@@ -77,7 +76,7 @@ class PersonageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        showBottomNavBar?.show(false)
+        showBottomNavBarProvider?.show(false)
 
         setBackArrowNavigationListener()
         setFields()
@@ -85,8 +84,10 @@ class PersonageFragment : Fragment() {
         setPullToRefresh()
 
         binding.apply {
-            lifecycleScope.launch {
-                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+//            lifecycleScope.launch {  // old version
+//          Restartable Lifecycle-aware coroutines https://developer.android.com/topic/libraries/architecture/coroutines
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                     launch {
                         viewModel.stateFlow.collect {
                             binding.pbLoadData.isVisible = it.dataLoading
@@ -115,9 +116,9 @@ class PersonageFragment : Fragment() {
                     }
 
                     launch {
-                        viewModel.sideEffect.collectLatest {
-                            if (it is IsErrorData) {
-                                writeError(view, it.errorMessage)
+                        viewModel.sideEffect.collectLatest { sideEffect ->
+                            if (sideEffect is IsErrorData) {
+                                writeError(view, sideEffect.errorMessage)
                             }
                         }
                     }
@@ -137,7 +138,6 @@ class PersonageFragment : Fragment() {
     }
 
     private fun gotoLocationsScreen(itemUi: LocationsUi?) {
-        Log.d("my_tag", "gotoLocationsScreen itemUi = $itemUi")
         if (itemUi != null) {
             parentFragmentManager.beginTransaction()
                 .replace(

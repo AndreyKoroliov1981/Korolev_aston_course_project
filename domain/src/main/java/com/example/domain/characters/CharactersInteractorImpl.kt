@@ -2,9 +2,12 @@ package com.example.domain.characters
 
 import com.example.domain.characters.model.Characters
 import com.example.domain.characters.model.Response
+import javax.inject.Inject
 
-class CharactersInteractorImpl(private val charactersRepository: CharactersRepository) :
-    CharactersInteractor {
+class CharactersInteractorImpl
+@Inject constructor(
+    private val charactersRepository: CharactersRepository
+) : CharactersInteractor {
     private var currentSearchName = ""
     private var currentFilters = listOf("Alive", "Dead", "unknown")
     override suspend fun getCharacters(
